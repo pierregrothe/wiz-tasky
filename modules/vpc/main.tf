@@ -8,7 +8,7 @@ terraform {
 }
 
 provider "aws" {
-  region = "us-east-2a" # Replace with your desired AWS region (e.g., "us-east-1", "eu-west-1")
+  region = "us-east-2" # Replace with your desired AWS region (e.g., "us-east-1", "eu-west-1")
 }
 
 resource "aws_vpc" "vpc" {
