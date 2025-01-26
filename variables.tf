@@ -1,36 +1,14 @@
-variable "cidr_block" {
+variable "aws_region" {
   type        = string
-  description = "CIDR block for the VPC"
+  description = "AWS region to deploy resources in"
 }
 
-variable "public_subnets" {
-  type        = list(string)
-  description = "List of CIDR blocks for public subnets"
+variable "environment_name" {
+  type        = string
+  description = "Name of the environment (e.g., dev, staging, prod)"
 }
 
-variable "private_subnets" {
-  type        = list(string)
-  description = "List of CIDR blocks for private subnets"
-}
-
-variable "availability_zones" {
-  type        = list(string)
-  description = "List of Availability Zones to use"
-}
-
-variable "tags" {
+variable "default_tags" {
   type        = map(string)
-  description = "Tags to apply to resources"
-}
-
-variable "ingress_rules" {
-  type        = list(any)
-  description = "List of ingress security group rules"
-  default     = []
-}
-
-variable "egress_rules" {
-  type        = list(any)
-  description = "List of egress security group rules"
-  default     = []
+  description = "Default tags to apply to all resources"
 }
