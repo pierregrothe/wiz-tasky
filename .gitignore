@@ -1,0 +1,26 @@
+# Terraform files
+.terraform/
+*.tfstate
+*.tfstate.*
+terraform.tfvars
+override.tf
+override.tf.json
+.terraformrc
+terraform-cloud.hcl
+*_override.tf
+*_override.tf.json
+
+# AWS credentials (if you are not using profiles/roles - generally avoid committing credentials!)
+# *credentials*
+# *aws*
+
+# General files
+*.zip
+*.log
+*.out
+*.backup
+*~
+*.swp
+.DS_Store
+.idea/
+.vscode/
