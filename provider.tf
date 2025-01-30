@@ -1,13 +1,5 @@
 terraform {
   required_version = ">= 1.10.5"
-  backend "remote" {
-    hostname     = "app.terraform.io"
-    organization = "wiz-interview-project"
-    workspaces {
-      name = "wiz-tasky-dev"
-    }
-  }
-  
 
   required_providers {
     aws = {
