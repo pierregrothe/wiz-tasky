@@ -57,3 +57,13 @@ variable "tags_default" {
   type        = map(string)
   default     = {}
 }
+
+variable "mongodb_admin_username" {
+  description = "MongoDB admin username"
+  type        = string
+}
+
+variable "eks_version" {
+  description = "EKS cluster version"
+  type        = string
+}
