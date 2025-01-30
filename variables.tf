@@ -1,3 +1,4 @@
+# wiz-tasky/variables.tf
 variable "aws_region" {
   description = "AWS region for deploying infrastructure"
   type        = string
@@ -25,12 +26,12 @@ variable "vpc_cidr" {
   type        = string
 }
 
-variable "public_subnet_cidrs" {
+variable "public_subnets_cidr" {
   description = "List of CIDR blocks for public subnets"
   type        = list(string)
 }
 
-variable "private_subnet_cidrs" {
+variable "private_subnets_cidr" {
   description = "List of CIDR blocks for private subnets"
   type        = list(string)
 }
@@ -40,7 +41,24 @@ variable "availability_zones" {
   type        = list(string)
 }
 
-variable "tags" {
-  description = "Map of tags for all resources"
+variable "availability_zones" {
+  description = "List of availability zones"
+  type        = list(string)
+}
+
+variable "environment_name" {
+  description = "Environment name (e.g., dev, staging, prod)"
+  type        = string
+}
+
+variable "tags_env" {
+  description = "Environment-specific tags"
   type        = map(string)
+  default     = {}
+}
+
+variable "tags_default" {
+  description = "Default tags applied to all resources"
+  type        = map(string)
+  default     = {}
 }

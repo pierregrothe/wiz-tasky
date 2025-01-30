@@ -8,6 +8,7 @@ locals {
     {
       "Project" = var.project_name # Adds the project name tag
       "Environment" = var.environment_name # Adds the environment name tag
+      "CostCenter"  = lookup(var.tags_env, "CostCenter", "WizProject") # Adds Cost Center if available
     }
   )
 }
