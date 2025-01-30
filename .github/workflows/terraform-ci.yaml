@@ -12,32 +12,35 @@ jobs:
     name: "Terraform Plan & Apply"
     runs-on: ubuntu-latest
 
-    env:
-      TF_API_TOKEN: ${{ secrets.TF_API_TOKEN_DEV }}
-      TERRAFORM_WORKSPACE: "wiz-tasky-dev"
+    permissions:
+      id-token: write
+      contents: read
 
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v3
 
-      - name: Set Environment Variables for Staging & Prod
-        if: github.ref == 'refs/heads/staging'
-        run: echo "TF_API_TOKEN=${{ secrets.TF_API_TOKEN_STAGING }}" >> $GITHUB_ENV && echo "TERRAFORM_WORKSPACE=wiz-tasky-staging" >> $GITHUB_ENV
-
-      - name: Set Environment Variables for Prod
-        if: github.ref == 'refs/heads/main'
-        run: echo "TF_API_TOKEN=${{ secrets.TF_API_TOKEN_PROD }}" >> $GITHUB_ENV && echo "TERRAFORM_WORKSPACE=wiz-tasky-prod" >> $GITHUB_ENV
+      - name: Configure AWS OIDC Authentication
+        id: aws-auth
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          role-to-assume: ${{ secrets.AWS_ROLE_TO_ASSUME }}
+          role-session-name: GitHubActionsTerraform
+          aws-region: us-east-1
 
       - name: Install Terraform
         uses: hashicorp/setup-terraform@v2
         with:
-          terraform_version: 1.6.0
+          terraform_version: 1.10.5
 
       - name: Terraform Init
-        run: terraform init -backend-config="hostname=app.terraform.io" -backend-config="organization=wiz-tasky-org" -backend-config="workspaces.name=$TERRAFORM_WORKSPACE"
+        run: terraform init
+
+      - name: Select Terraform Workspace
+        run: terraform workspace select wiz-tasky-dev || terraform workspace new wiz-tasky-dev
 
       - name: Terraform Plan
-        run: terraform plan -var="terraform_workspace=$TERRAFORM_WORKSPACE" -input=false
+        run: terraform plan -input=false
 
       - name: Terraform Apply (Dev)
         if: github.ref == 'refs/heads/dev'
