@@ -8,12 +8,12 @@ variable "vpc_cidr" {
   type        = string
 }
 
-variable "public_subnet_cidrs" {
+variable "public_subnets_cidr" {
   description = "List of CIDR blocks for public subnets"
   type        = list(string)
 }
 
-variable "private_subnet_cidrs" {
+variable "private_subnets_cidr" {
   description = "List of CIDR blocks for private subnets"
   type        = list(string)
 }
@@ -24,6 +24,27 @@ variable "availability_zones" {
 }
 
 variable "tags" {
-  description = "Map of tags for all resources"
+  description = "Default tags for all resources"
   type        = map(string)
+  default = {
+    Environment = "dev"
+    ManagedBy   = "Terraform"
+  }
+}
+
+variable "environment_name" {
+  description = "Environment name (e.g., dev, staging, prod)"
+  type        = string
+}
+
+variable "tags_env" {
+  description = "Environment-specific tags"
+  type        = map(string)
+  default     = {}
+}
+
+variable "tags_default" {
+  description = "Default tags applied to all resources"
+  type        = map(string)
+  default     = {}
 }

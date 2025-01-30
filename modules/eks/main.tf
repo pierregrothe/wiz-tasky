@@ -1,13 +1,17 @@
-resource "aws_eks_cluster" "eks" {
-  name     = "${var.vpc_id}-eks-cluster"
-  role_arn = aws_iam_role.eks_role.arn
+resource "aws_iam_role" "eks_role" {
+  name = "${var.project_name}-eks-role"
 
-  vpc_config {
-    subnet_ids = var.private_subnet_ids
-  }
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [{
+      Effect = "Allow"
+      Principal = { Service = "eks.amazonaws.com" }
+      Action    = "sts:AssumeRole"
+    }]
+  })
 
-  tags = {
-    Name        = "${var.vpc_id}-eks-cluster"
-    Environment = "production"
-  }
+  tags = merge(
+    var.tags,
+    { Name = "${var.project_name}-eks-role" }
+  )
 }
