@@ -63,6 +63,12 @@ variable "mongodb_admin_username" {
   type        = string
 }
 
+variable "mongodb_admin_password" {
+  description = "MongoDB admin password (sensitive variable)"
+  type        = string
+  sensitive   = true
+}
+
 variable "eks_version" {
   description = "EKS cluster version"
   type        = string
