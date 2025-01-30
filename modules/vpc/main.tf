@@ -1,4 +1,5 @@
 # wiz-tasky/modules/vpc/main.tf
+
 # Define the VPC resource
 resource "aws_vpc" "main" {
   cidr_block = var.vpc_cidr  # The CIDR block for the VPC
@@ -105,10 +106,5 @@ resource "aws_route_table_association" "private" {
   count          = length(var.private_subnets_cidr)
   subnet_id      = aws_subnet.private[count.index].id
   route_table_id = aws_route_table.private.id
-}
-
-variable "availability_zones" {
-  description = "List of availability zones to use"
-  type        = list(string)
 }
 

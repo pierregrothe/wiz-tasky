@@ -41,11 +41,6 @@ variable "availability_zones" {
   type        = list(string)
 }
 
-variable "availability_zones" {
-  description = "List of availability zones"
-  type        = list(string)
-}
-
 variable "environment_name" {
   description = "Environment name (e.g., dev, staging, prod)"
   type        = string
