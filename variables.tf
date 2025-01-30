@@ -5,12 +5,6 @@ variable "aws_region" {
   default     = "us-east-1"
 }
 
-variable "aws_profile" {
-  description = "AWS CLI profile (only used locally, not in CI/CD)"
-  type        = string
-  default     = "default"
-}
-
 variable "aws_account_id" {
   description = "AWS account ID where resources will be deployed"
   type        = string
