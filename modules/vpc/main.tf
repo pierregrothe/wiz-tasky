@@ -7,7 +7,7 @@ resource "aws_vpc" "main" {
   tags = merge(
     local.all_tags,
     {
-      Name = "${var.project_name}--${var.environment_name}-vpc" # Assigns a name to the VPC with environment name
+      Name = "${var.project_name}-${var.environment_name}-vpc" # Assigns a name to the VPC with environment name
     }
   )
 }
@@ -20,7 +20,7 @@ resource "aws_subnet" "public" {
 
   tags = merge(
     local.all_tags,
-    { Name = "${var.project_name}--${var.environment_name}-public-${count.index}" }
+    { Name = "${var.project_name}-${var.environment_name}-public-${count.index}" }
   )
 }
 
@@ -32,7 +32,7 @@ resource "aws_subnet" "private" {
 
   tags = merge(
     local.all_tags,
-    { Name = "${var.project_name}--${var.environment_name}-private-${count.index}" }
+    { Name = "${var.project_name}-${var.environment_name}-private-${count.index}" }
   )
 }
 
@@ -41,7 +41,7 @@ resource "aws_internet_gateway" "igw" {
 
   tags = merge(
     local.all_tags,
-    { Name = "${var.project_name}--${var.environment_name}-igw" }
+    { Name = "${var.project_name}-${var.environment_name}-igw" }
   )
 }
 
@@ -51,7 +51,7 @@ resource "aws_nat_gateway" "nat" {
 
   tags = merge(
     local.all_tags,
-    { Name = "${var.project_name}--${var.environment_name}-nat" }
+    { Name = "${var.project_name}-${var.environment_name}-nat" }
   )
 }
 
@@ -60,7 +60,7 @@ resource "aws_eip" "nat" {
 
   tags = merge(
     local.all_tags,
-    { Name = "${var.project_name}--${var.environment_name}-eip" }
+    { Name = "${var.project_name}-${var.environment_name}-eip" }
   )
 }
 
@@ -75,7 +75,7 @@ resource "aws_route_table" "public" {
 
   tags = merge(
     local.all_tags,
-    { Name = "${var.project_name}--${var.environment_name}-public-rt" }
+    { Name = "${var.project_name}-${var.environment_name}-public-rt" }
   )
 }
 
@@ -97,7 +97,7 @@ resource "aws_route_table" "private" {
 
   tags = merge(
     local.all_tags,
-    { Name = "${var.project_name}--${var.environment_name}-private-rt" }
+    { Name = "${var.project_name}-${var.environment_name}-private-rt" }
   )
 }
 
