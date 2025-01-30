@@ -1,10 +1,10 @@
 terraform {
   backend "remote" {
     hostname     = "app.terraform.io"
-    organization = "wiz-tasky-org"
+    organization = "wiz-interview-project"
 
     workspaces {
-      name = var.terraform_workspace
+      prefix = "wiz-tasky-"
     }
   }
 }
