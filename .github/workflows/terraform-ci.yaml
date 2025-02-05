@@ -11,6 +11,12 @@ jobs:
   validate:
     name: "Terraform Validate"
     runs-on: ubuntu-latest
+    env:
+      # Set TF_WORKSPACE dynamically based on the branch.
+      # If the branch is "main", use "wiz-tasky-prod";
+      # if it's "staging", use "wiz-tasky-staging";
+      # otherwise, default to "wiz-tasky-dev".
+      TF_WORKSPACE: ${{ github.ref == 'refs/heads/main' && 'wiz-tasky-prod' || github.ref == 'refs/heads/staging' && 'wiz-tasky-staging' || 'wiz-tasky-dev' }}
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v3
@@ -20,8 +26,12 @@ jobs:
         with:
           terraform_version: 1.10.5
 
+      - name: Terraform Init
+        run: terraform init
+
       - name: Terraform Format Check
         run: terraform fmt -check
 
       - name: Terraform Validate
         run: terraform validate
+

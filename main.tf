@@ -2,7 +2,7 @@
 // Root module for the wiz-tasky project, instantiates the VPC module
 
 terraform {
-  required_version = ">= 1.0.0"
+  required_version = ">= 1.10.5"
 }
 
 module "vpc" {
