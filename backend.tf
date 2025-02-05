@@ -3,7 +3,7 @@ terraform {
     organization = "wiz-interview-project"
 
     workspaces {
-      name = "wiz-tasky-dev"  // Default workspace; will be overridden by TF_WORKSPACE if set.
+      name = "wiz-tasky-dev" // Default workspace; will be overridden by TF_WORKSPACE if set.
     }
 
   }

@@ -26,7 +26,7 @@ variable "assessment_mode" {
 }
 
 variable "tags_default" {
-  type = map(string)
+  type        = map(string)
   description = "Default tags for all resources"
   default = {
     project    = "wiz-tasky"
@@ -35,7 +35,7 @@ variable "tags_default" {
 }
 
 variable "tags_env" {
-  type = map(string)
+  type        = map(string)
   description = "Environment-specific tags"
   default = {
     environment = "dev"
@@ -84,6 +84,6 @@ variable "bastion_ami_id" {
 variable "allowed_ssh_ips" {
   type        = list(string)
   description = "List of CIDR blocks allowed for SSH access to the Bastion host."
-  default     = ["203.0.113.0/24"]  // Replace with your trusted IP range(s)
+  default     = ["203.0.113.0/24"] // Replace with your trusted IP range(s)
 }
 

@@ -23,7 +23,7 @@ module "bastion" {
   source = "./modules/bastion"
 
   vpc_id           = module.vpc.vpc_id
-  public_subnet_id = element(module.vpc.public_subnets, 0)  // Use the first public subnet
+  public_subnet_id = element(module.vpc.public_subnets, 0) // Use the first public subnet
 
   bastion_instance_type = var.bastion_instance_type
   ami_id                = var.bastion_ami_id
