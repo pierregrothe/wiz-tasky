@@ -27,8 +27,8 @@ output "bastion_public_ip" {
 }
 
 output "bastion_private_key" {
-  description = "The private key for the Bastion host. Download and store it securely."
-  value       = tls_private_key.bastion.private_key_pem
+  description = "The private key for the Bastion host, from the Bastion module."
+  value       = module.bastion.bastion_private_key
   sensitive   = true
 }
 
