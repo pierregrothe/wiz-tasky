@@ -1,69 +1,70 @@
-# wiz-tasky/variables.tf
+// File: variables.tf
+// Global variables for the wiz-tasky project
+
+variable "project" {
+  type        = string
+  description = "Project name (e.g., wiz-tasky)"
+  default     = "wiz-tasky"
+}
+
+variable "environment" {
+  type        = string
+  description = "Deployment environment (dev, staging, prod)"
+  default     = "dev"
+}
+
 variable "aws_region" {
-  description = "AWS region for deploying infrastructure"
   type        = string
-  default     = "us-east-1"
+  description = "AWS region for deployment"
+  default     = "us-east-2"
 }
 
-variable "aws_account_id" {
-  description = "AWS account ID where resources will be deployed"
-  type        = string
+variable "assessment_mode" {
+  type        = bool
+  description = "Toggle for assessment mode (introduces intentional misconfigurations)"
+  default     = false
 }
 
-variable "project_name" {
-  description = "Project name for tagging"
-  type        = string
+// Default tags that apply to all resources
+variable "tags_default" {
+  type = map(string)
+  description = "Default tags for all resources"
+  default = {
+    project    = "wiz-tasky"
+    managed_by = "Terraform"
+  }
 }
 
+// Environment-specific tags that can override defaults if needed
+variable "tags_env" {
+  type = map(string)
+  description = "Environment-specific tags"
+  default = {
+    environment = "dev"
+  }
+}
+
+// VPC configuration variables
 variable "vpc_cidr" {
-  description = "CIDR block for the VPC"
   type        = string
+  description = "CIDR block for the VPC"
+  default     = "10.0.0.0/16"
 }
 
 variable "public_subnets_cidr" {
-  description = "List of CIDR blocks for public subnets"
   type        = list(string)
+  description = "CIDR blocks for public subnets"
+  default     = ["10.0.1.0/24", "10.0.2.0/24"]
 }
 
 variable "private_subnets_cidr" {
-  description = "List of CIDR blocks for private subnets"
   type        = list(string)
+  description = "CIDR blocks for private subnets"
+  default     = ["10.0.101.0/24", "10.0.102.0/24"]
 }
 
 variable "availability_zones" {
-  description = "List of availability zones"
   type        = list(string)
-}
-
-variable "environment_name" {
-  description = "Environment name (e.g., dev, staging, prod)"
-  type        = string
-}
-
-variable "tags_env" {
-  description = "Environment-specific tags"
-  type        = map(string)
-  default     = {}
-}
-
-variable "tags_default" {
-  description = "Default tags applied to all resources"
-  type        = map(string)
-  default     = {}
-}
-
-variable "mongodb_admin_username" {
-  description = "MongoDB admin username"
-  type        = string
-}
-
-variable "mongodb_admin_password" {
-  description = "MongoDB admin password (sensitive variable)"
-  type        = string
-  sensitive   = true
-}
-
-variable "eks_version" {
-  description = "EKS cluster version"
-  type        = string
+  description = "Availability Zones for subnet placement"
+  default     = ["us-east-2a", "us-east-2b"]
 }

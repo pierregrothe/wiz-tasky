@@ -1,14 +1,17 @@
-# wiz-tasky/modules/vpc/tags.tf
+// File: modules/vpc/tags.tf
 
-# Define a local variable to merge default, environment and project tags
+/*
+  Local Variable: merged_tags
+  Purpose:
+    - Merges the base tags (from the root) with explicit project and environment values.
+    - Ensures tag keys are lowercase and hyphenated.
+*/
 locals {
-  all_tags = merge(
-    var.tags_default, # Default tags that apply to all resources
-    var.tags_env,     # Environment-specific tags, which override defaults if there is a conflict
+  merged_tags = merge(
+    var.tags, // Base tags from the root module
     {
-      "Project" = var.project_name # Adds the project name tag
-      "Environment" = var.environment_name # Adds the environment name tag
-      "CostCenter"  = lookup(var.tags_env, "CostCenter", "WizProject") # Adds Cost Center if available
+      project     = var.project_name,
+      environment = var.environment_name
     }
   )
 }

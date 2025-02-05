@@ -1,0 +1,15 @@
+
+---
+
+### Explanation
+
+- **Optimized `tags.tf`:**  
+  We renamed the local variable to `merged_tags` to clearly convey its purpose. The tag keys are now in lowercase and hyphenated, following the best practices. The use of `lookup` ensures that if a cost-center tag isn’t provided in `var.tags_env`, we default to `"wiz-tasky"`.
+
+- **`versions.tf`:**  
+  This file pins our AWS provider version and specifies a minimum Terraform version, ensuring consistency across deployments.
+
+- **`README.md`:**  
+  A brief yet comprehensive guide to the VPC module helps maintain clarity for future developers or audits.
+
+Let me know if this meets your expectations or if there’s anything else you’d like to refine, Pierre!

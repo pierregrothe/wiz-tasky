@@ -1,24 +1,16 @@
+// File: modules/vpc/outputs.tf
+
 output "vpc_id" {
-  description = "ID of the VPC"
+  description = "The ID of the created VPC"
   value       = aws_vpc.main.id
 }
 
-output "public_subnet_ids" {
-  description = "List of IDs for public subnets"
-  value       = aws_subnet.public[*].id
+output "public_subnets" {
+  description = "List of public subnet IDs"
+  value       = [for subnet in aws_subnet.public : subnet.id]
 }
 
-output "private_subnet_ids" {
-  description = "List of IDs for private subnets"
-  value       = aws_subnet.private[*].id
-}
-
-output "internet_gateway_id" {
-  description = "ID of the Internet Gateway"
-  value       = aws_internet_gateway.igw.id
-}
-
-output "nat_gateway_id" {
-  description = "ID of the NAT Gateway"
-  value       = aws_nat_gateway.nat.id
+output "private_subnets" {
+  description = "List of private subnet IDs"
+  value       = [for subnet in aws_subnet.private : subnet.id]
 }
