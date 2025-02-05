@@ -25,7 +25,6 @@ variable "assessment_mode" {
   default     = false
 }
 
-// Default tags that apply to all resources
 variable "tags_default" {
   type = map(string)
   description = "Default tags for all resources"
@@ -35,7 +34,6 @@ variable "tags_default" {
   }
 }
 
-// Environment-specific tags that can override defaults if needed
 variable "tags_env" {
   type = map(string)
   description = "Environment-specific tags"
