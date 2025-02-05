@@ -81,11 +81,6 @@ variable "bastion_ami_id" {
   default     = "ami-018875e7376831abe"
 }
 
-variable "bastion_key_name" {
-  type        = string
-  description = "Name of the SSH key pair for the Bastion host."
-}
-
 variable "allowed_ssh_ips" {
   type        = list(string)
   description = "List of CIDR blocks allowed for SSH access to the Bastion host."
