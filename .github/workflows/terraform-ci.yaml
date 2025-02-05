@@ -12,14 +12,10 @@ jobs:
     name: "Terraform Validate"
     runs-on: ubuntu-latest
     env:
-      # Dynamically set TF_WORKSPACE based on the branch:
+      # Set TF_WORKSPACE dynamically based on the branch.
       TF_WORKSPACE: ${{ github.ref == 'refs/heads/main' && 'wiz-tasky-prod' || github.ref == 'refs/heads/staging' && 'wiz-tasky-staging' || 'wiz-tasky-dev' }}
-      # Dynamically select the appropriate Terraform Cloud API token based on the branch:
-      TF_TOKEN_app_terraform_io: ${{ 
-        github.ref == 'refs/heads/main' && secrets.TF_API_TOKEN_PROD || 
-        github.ref == 'refs/heads/staging' && secrets.TF_API_TOKEN_STAGING || 
-        secrets.TF_API_TOKEN_DEV 
-      }}
+      # Set the appropriate Terraform Cloud API token for the environment.
+      TF_TOKEN_app_terraform_io: ${{ github.ref == 'refs/heads/main' && secrets.TF_API_TOKEN_PROD || github.ref == 'refs/heads/staging' && secrets.TF_API_TOKEN_STAGING || secrets.TF_API_TOKEN_DEV }}
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v3
