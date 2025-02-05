@@ -66,3 +66,29 @@ variable "availability_zones" {
   description = "Availability Zones for subnet placement"
   default     = ["us-east-2a", "us-east-2b"]
 }
+
+// Additional Bastion Host variables
+
+variable "bastion_instance_type" {
+  type        = string
+  description = "EC2 instance type for the Bastion host."
+  default     = "t3.micro"
+}
+
+variable "bastion_ami_id" {
+  type        = string
+  description = "AMI ID for the Bastion host (e.g., Amazon Linux 2023 AMI)."
+  default     = "ami-018875e7376831abe"
+}
+
+variable "bastion_key_name" {
+  type        = string
+  description = "Name of the SSH key pair for the Bastion host."
+}
+
+variable "allowed_ssh_ips" {
+  type        = list(string)
+  description = "List of CIDR blocks allowed for SSH access to the Bastion host."
+  default     = ["203.0.113.0/24"]  // Replace with your trusted IP range(s)
+}
+
