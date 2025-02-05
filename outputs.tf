@@ -32,3 +32,8 @@ output "bastion_private_key" {
   sensitive   = true
 }
 
+output "iam_role_arn" {
+  description = "The ARN of the IAM role created for the MongoDB instance (or other purpose)."
+  value       = module.iam.role_arn
+}
+

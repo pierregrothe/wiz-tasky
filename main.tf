@@ -35,3 +35,12 @@ module "bastion" {
 
   bastion_allowed_ssh_ip = var.bastion_allowed_ssh_ip
 }
+
+module "iam" {
+  source            = "./modules/iam"
+  role_name         = "wiz-tasky-mongodb-role"  // or any other role name you want to use
+  assessment_mode   = var.assessment_mode
+  tags              = local.all_tags
+  project_name      = var.project
+  environment_name  = var.environment
+}
