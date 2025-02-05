@@ -5,12 +5,13 @@
 // access for troubleshooting. It creates a dedicated security group that
 // restricts SSH access to allowed IP addresses, deploys the Bastion host
 // in a specified public subnet, and outputs key details.
+// It leverages an automatically generated key pair (see key_pair.tf) for SSH access.
 // ---------------------------------------------------------------------------
 
 /*
   Resource: aws_security_group.bastion_sg
   Description: Security group for the Bastion host, allowing inbound SSH
-               access only from the allowed IP addresses and all outbound traffic.
+               access only from allowed IP addresses.
 */
 resource "aws_security_group" "bastion_sg" {
   name        = "${var.project_name}-${var.environment_name}-bastion-sg"
@@ -39,17 +40,18 @@ resource "aws_security_group" "bastion_sg" {
 /*
   Resource: aws_instance.bastion
   Description: Provisions the Bastion host instance in the specified public subnet.
-               The instance uses the provided AMI, instance type, and key pair.
-               It is associated with the Bastion security group for controlled SSH access.
+               The instance is associated with the Bastion security group and uses the
+               automatically generated key pair for SSH access.
 */
 resource "aws_instance" "bastion" {
   ami                    = var.ami_id
   instance_type          = var.bastion_instance_type
   subnet_id              = var.public_subnet_id
-  key_name               = var.bastion_key_name
   associate_public_ip_address = true
 
   vpc_security_group_ids = [aws_security_group.bastion_sg.id]
+
+  key_name = aws_key_pair.bastion.key_name
 
   tags = merge(
     local.merged_tags,

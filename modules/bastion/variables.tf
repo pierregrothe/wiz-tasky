@@ -46,15 +46,6 @@ variable "ami_id" {
 }
 
 /*
-  Variable: bastion_key_name
-  Description: The name of the SSH key pair to use for accessing the Bastion host.
-*/
-variable "bastion_key_name" {
-  type        = string
-  description = "SSH key pair name for Bastion host access."
-}
-
-/*
   Variable: allowed_ssh_ips
   Description: A list of CIDR blocks allowed to SSH into the Bastion host.
   Example: ["203.0.113.0/24"] (Replace with your home/work IP range)
