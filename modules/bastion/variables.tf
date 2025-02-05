@@ -81,3 +81,8 @@ variable "tags" {
   type        = map(string)
   description = "Base tags to apply to all resources in this module."
 }
+
+variable "bastion_allowed_ssh_ip" {
+  type        = string
+  description = "Allowed CIDR for SSH access to the Bastion host (e.g., 70.53.172.107/32)."
+}

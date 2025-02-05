@@ -23,13 +23,15 @@ module "bastion" {
   source = "./modules/bastion"
 
   vpc_id           = module.vpc.vpc_id
-  public_subnet_id = element(module.vpc.public_subnets, 0) // Use the first public subnet
+  public_subnet_id = element(module.vpc.public_subnets, 0)
 
   bastion_instance_type = var.bastion_instance_type
   ami_id                = var.bastion_ami_id
-  allowed_ssh_ips       = var.allowed_ssh_ips
-
+  allowed_ssh_ips       = [var.bastion_allowed_ssh_ip]  # if your module expects a list; otherwise, update the module to use a single string.
+  
   project_name     = var.project
   environment_name = var.environment
   tags             = local.all_tags
+
+  bastion_allowed_ssh_ip = var.bastion_allowed_ssh_ip
 }

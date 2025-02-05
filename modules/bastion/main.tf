@@ -19,11 +19,11 @@ resource "aws_security_group" "bastion_sg" {
   vpc_id      = var.vpc_id
 
   ingress {
-    description = "Allow SSH access from allowed IP addresses"
+    description = "Allow SSH access from bastion_allowed_ssh_ip"
     from_port   = 22
     to_port     = 22
     protocol    = "tcp"
-    cidr_blocks = var.allowed_ssh_ips
+    cidr_blocks = [var.bastion_allowed_ssh_ip]
   }
 
   egress {
@@ -36,6 +36,7 @@ resource "aws_security_group" "bastion_sg" {
 
   tags = local.merged_tags
 }
+
 
 /*
   Resource: aws_instance.bastion
