@@ -1,0 +1,36 @@
+name: "Terraform Remediation Switch"
+
+on:
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: "Target environment (dev, staging, prod)"
+        required: true
+        default: "dev"
+      remediation_mode:
+        description: "Set to true for remediated (secure) configuration; false for misconfigured state."
+        required: true
+        default: "false"
+
+jobs:
+  remediation:
+    runs-on: ubuntu-latest
+    env:
+      # Dynamically set the TF_WORKSPACE by concatenating "wiz-tasky-" with the chosen environment.
+      TF_WORKSPACE: ${{ "wiz-tasky-" + github.event.inputs.environment }}
+      # Select the correct Terraform Cloud API token based on the chosen environment.
+      TF_TOKEN_app_terraform_io: ${{ github.event.inputs.environment == 'prod' && secrets.TF_API_TOKEN_PROD || github.event.inputs.environment == 'staging' && secrets.TF_API_TOKEN_STAGING || secrets.TF_API_TOKEN_DEV }}
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v2
+        with:
+          terraform_version: 1.10.5
+
+      - name: Terraform Init
+        run: terraform init
+
+      - name: Terraform Apply with Remediation Mode
+        run: terraform apply -auto-approve -var="remediation_mode=${{ github.event.inputs.remediation_mode }}"

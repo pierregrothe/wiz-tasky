@@ -1,21 +1,19 @@
-name: "Terraform Quality Checks"
+name: "Terraform Deploy & Remediate"
 
 on:
-  push:
-    branches:
-      - dev
-      - staging
-      - main
+  workflow_dispatch:  # Allows manual triggering with inputs
+    inputs:
+      remediation_mode:
+        description: "Set to true for remediated (secure) configuration"
+        required: true
+        default: "false"
 
 jobs:
-  validate:
-    name: "Terraform Validate"
+  deploy:
     runs-on: ubuntu-latest
     env:
-      # Set TF_WORKSPACE dynamically based on the branch.
-      TF_WORKSPACE: ${{ github.ref == 'refs/heads/main' && 'wiz-tasky-prod' || github.ref == 'refs/heads/staging' && 'wiz-tasky-staging' || 'wiz-tasky-dev' }}
-      # Set the appropriate Terraform Cloud API token for the environment.
-      TF_TOKEN_app_terraform_io: ${{ github.ref == 'refs/heads/main' && secrets.TF_API_TOKEN_PROD || github.ref == 'refs/heads/staging' && secrets.TF_API_TOKEN_STAGING || secrets.TF_API_TOKEN_DEV }}
+      TF_TOKEN_app_terraform_io: ${{ secrets.TF_API_TOKEN_PROD }}
+      TF_WORKSPACE: wiz-tasky-prod
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v3
@@ -28,8 +26,5 @@ jobs:
       - name: Terraform Init
         run: terraform init
 
-      - name: Terraform Format Check
-        run: terraform fmt -check
-
-      - name: Terraform Validate
-        run: terraform validate
+      - name: Terraform Apply Remediation
+        run: terraform apply -auto-approve -var="remediation_mode=${{ github.event.inputs.remediation_mode }}"

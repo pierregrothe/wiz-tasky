@@ -87,3 +87,9 @@ variable "bastion_allowed_ssh_ip" {
   description = "Allowed CIDR for SSH access to the Bastion host (e.g., 70.53.172.107/32)"
   default     = "70.53.172.107/32" // Set your default IP here
 }
+
+variable "remediation_mode" {
+  type        = bool
+  description = "Set to true to deploy a remediated (secure) configuration; false to deploy intentionally misconfigured resources for assessment."
+  default     = false
+}

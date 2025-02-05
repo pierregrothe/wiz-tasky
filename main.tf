@@ -39,8 +39,17 @@ module "bastion" {
 module "iam" {
   source            = "./modules/iam"
   role_name         = "wiz-tasky-mongodb-role"  // or any other role name you want to use
-  assessment_mode   = var.assessment_mode
+  remediation_mode  = var.remediation_mode
   tags              = local.all_tags
   project_name      = var.project
   environment_name  = var.environment
+}
+
+module "s3_backup" {
+  source           = "./modules/s3-backup"
+  bucket_name      = "wiz-tasky-backups-${var.environment}"
+  remediation_mode = var.remediation_mode
+  tags             = local.all_tags
+  project_name     = var.project
+  environment_name = var.environment
 }

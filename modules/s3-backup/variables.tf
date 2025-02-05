@@ -1,27 +1,21 @@
-// File: modules/iam/variables.tf
+// File: modules/s3-backup/variables.tf
 // ---------------------------------------------------------------------------
-// Input Variables for the IAM Module
+// Input Variables for the S3 Backup Module
 // ---------------------------------------------------------------------------
 
-variable "role_name" {
+variable "bucket_name" {
   type        = string
-  description = "The name for the IAM role."
-}
-
-variable "assumed_by_service" {
-  type        = string
-  description = "The AWS service allowed to assume this role (e.g., ec2.amazonaws.com)."
-  default     = "ec2.amazonaws.com"
+  description = "Name of the S3 bucket for database backups."
 }
 
 variable "remediation_mode" {
   type        = bool
-  description = "Toggle to deploy a remediated (secure) configuration if true, or a misconfigured one if false."
+  description = "Toggle for remediation mode: true for a remediated (secure) configuration, false for misconfigured (public) configuration."
 }
 
 variable "tags" {
   type        = map(string)
-  description = "Base tags to apply to the IAM role."
+  description = "Base tags to apply to the S3 bucket."
 }
 
 variable "project_name" {
