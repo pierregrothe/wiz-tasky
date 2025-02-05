@@ -19,9 +19,3 @@ resource "aws_key_pair" "bastion" {
     { Name = "${var.project_name}-${var.environment_name}-bastion-key" }
   )
 }
-
-output "bastion_private_key" {
-  description = "The private key for the Bastion host. Download and store it securely."
-  value       = tls_private_key.bastion.private_key_pem
-  sensitive   = true
-}
