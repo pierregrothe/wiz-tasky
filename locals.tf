@@ -8,7 +8,7 @@ locals {
     {
       project     = var.project,         // Explicit project tag
       environment = var.environment,     // Explicit environment tag
-      "cost-center" = lookup(var.tags_env, "cost-center", "wiz-tasky") // Default cost-center value if not provided
+      "cost-center" = lookup(var.tags_env, "cost-center", "CC-9999") // Default cost-center value if not provided
     }
   )
 }
