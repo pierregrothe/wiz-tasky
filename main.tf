@@ -27,8 +27,8 @@ module "bastion" {
 
   bastion_instance_type = var.bastion_instance_type
   ami_id                = var.bastion_ami_id
-  allowed_ssh_ips       = [var.bastion_allowed_ssh_ip]  # if your module expects a list; otherwise, update the module to use a single string.
-  
+  allowed_ssh_ips       = [var.bastion_allowed_ssh_ip] # if your module expects a list; otherwise, update the module to use a single string.
+
   project_name     = var.project
   environment_name = var.environment
   tags             = local.all_tags

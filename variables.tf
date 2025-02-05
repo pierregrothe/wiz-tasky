@@ -85,6 +85,6 @@ variable "bastion_ami_id" {
 variable "bastion_allowed_ssh_ip" {
   type        = string
   description = "Allowed CIDR for SSH access to the Bastion host (e.g., 70.53.172.107/32)"
-  default     = "70.53.172.107/32"  // Set your default IP here
+  default     = "70.53.172.107/32" // Set your default IP here
 }
 
