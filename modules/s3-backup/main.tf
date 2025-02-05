@@ -2,10 +2,10 @@
 // ---------------------------------------------------------------------------
 // S3 Backup Module for wiz-tasky Project
 // This module provisions an S3 bucket for storing database backups.
-// The bucket's versioning is enabled using a separate resource (aws_s3_bucket_versioning)
-// as recommended, and the bucket policy is configured based on the remediation_mode variable:
-//   - When remediation_mode is false (misconfigured), the bucket policy allows public read access.
-//   - When remediation_mode is true (remediated), the bucket policy denies public access.
+// It enables bucket versioning using a separate resource and applies a bucket policy
+// that is conditionally set based on the remediation_mode variable.
+// To allow the misconfigured (public) bucket policy to be applied, we disable the 
+// BlockPublicPolicy setting using an aws_s3_bucket_public_access_block resource.
 // ---------------------------------------------------------------------------
 
 resource "aws_s3_bucket" "backup" {
@@ -20,7 +20,17 @@ resource "aws_s3_bucket" "backup" {
   )
 }
 
-# Enable versioning using the recommended resource instead of inline versioning.
+# Disable S3 block public access so that our public bucket policy can be applied.
+resource "aws_s3_bucket_public_access_block" "backup_public_access" {
+  bucket = aws_s3_bucket.backup.id
+
+  block_public_acls       = false
+  block_public_policy     = false  # This is key – disables blocking public bucket policies.
+  ignore_public_acls      = false
+  restrict_public_buckets = false
+}
+
+# Enable versioning using a separate resource (recommended approach).
 resource "aws_s3_bucket_versioning" "backup_versioning" {
   bucket = aws_s3_bucket.backup.id
 
