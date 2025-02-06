@@ -110,3 +110,11 @@ variable "mongodb_admin_password" {
   description = "MongoDB admin password"
   sensitive   = true
 }
+
+// Additional MongoDB Host variables
+
+variable "mongodb_instance_type" {
+  type        = string
+  description = "EC2 instance type for the MongoDB host."
+  default     = "t3.micro"
+}

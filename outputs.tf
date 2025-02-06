@@ -1,5 +1,8 @@
 // File: outputs.tf
-// Outputs from the root module
+// ---------------------------------------------------------------------------
+// Root Outputs for the wiz-tasky Project
+// Exposes key outputs from the modules for reference.
+// ---------------------------------------------------------------------------
 
 output "vpc_id" {
   description = "The ID of the created VPC"
@@ -26,15 +29,14 @@ output "bastion_public_ip" {
   value       = module.bastion.bastion_public_ip
 }
 
-output "bastion_private_key" {
-  description = "The private key for the Bastion host, from the Bastion module."
-  value       = module.bastion.bastion_private_key
-  sensitive   = true
+output "bastion_role_arn" {
+  description = "The ARN of the Bastion IAM role."
+  value       = module.iam_bastion.role_arn
 }
 
-output "iam_role_arn" {
-  description = "The ARN of the IAM role created for the MongoDB instance (or other purpose)."
-  value       = module.iam.role_arn
+output "mongodb_role_arn" {
+  description = "The ARN of the MongoDB IAM role."
+  value       = module.iam_mongodb.role_arn
 }
 
 output "s3_bucket_name" {
