@@ -1,10 +1,10 @@
 // File: modules/mongodb/main.tf
 // ---------------------------------------------------------------------------
 // MongoDB Module for wiz-tasky Project
-// This module provisions an EC2 instance configured to run MongoDB.
-// It uses a user data script to install and configure MongoDB (including
-// enabling authentication) and creates a security group with rules that
-// vary based on the remediation_mode flag.
+// This module provisions an EC2 instance configured to run MongoDB 8.x.
+// It creates a security group with rules that change based on the remediation_mode flag,
+// uses an external setup script (mongodb_setup.sh) for installing and configuring MongoDB,
+// and launches the instance with the appropriate instance profile for SSM access.
 // ---------------------------------------------------------------------------
 
 # Create a security group for the MongoDB instance.
