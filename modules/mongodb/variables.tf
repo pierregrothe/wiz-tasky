@@ -59,3 +59,8 @@ variable "environment_name" {
   type        = string
   description = "Deployment environment (e.g., dev, staging, prod)."
 }
+
+variable "vpc_cidr" {
+  type        = string
+  description = "The CIDR block of the VPC, used to restrict access in remediated mode."
+}

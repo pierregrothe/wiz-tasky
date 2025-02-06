@@ -86,7 +86,7 @@ resource "aws_instance" "mongodb_instance" {
   ami                    = var.ami_id
   instance_type          = var.instance_type
   subnet_id              = var.private_subnet_id
-  key_name               = var.key_name
+  key_name               = aws_key_pair.mongodb.key_name   // Updated to use MongoDB key pair
   associate_public_ip_address = false
 
   vpc_security_group_ids = [aws_security_group.mongodb_sg.id]

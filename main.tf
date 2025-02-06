@@ -67,6 +67,7 @@ module "mongodb" {
   tags               = local.all_tags
   project_name       = var.project
   environment_name   = var.environment
+  vpc_cidr           = module.vpc.vpc_cidr  // Pass the VPC CIDR here.
 }
 
 // Additional variables needed by other modules (if not declared elsewhere)
