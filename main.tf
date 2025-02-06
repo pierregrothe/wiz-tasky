@@ -58,7 +58,7 @@ module "iam_bastion" {
   managed_policy_arns = {
     ssm = "arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore"
   }
-  inline_policy_file  = "${path.module}/modules/bastion/iam_policy.json"
+  inline_policy_file  = ""   // No inline policy provided"
   tags                = local.all_tags
   project_name        = var.project
   environment_name    = var.environment
@@ -78,7 +78,7 @@ module "iam_mongodb" {
   managed_policy_arns = {
     ssm = "arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore"
   }
-  inline_policy_file  = ""   // No inline policy provided
+  inline_policy_file  = var.remediation_mode ? "${path.module}/modules/mongodb/iam_policy_remediated.json" : "${path.module}/modules/mongodb/iam_policy_misconfigured.json"
   tags                = local.all_tags
   project_name        = var.project
   environment_name    = var.environment
