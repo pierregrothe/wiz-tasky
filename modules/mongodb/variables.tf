@@ -59,3 +59,8 @@ variable "vpc_cidr" {
   type        = string
   description = "The CIDR block of the VPC, used to restrict access in remediated mode."
 }
+
+variable "mongodb_iam_role_name" {
+  type        = string
+  description = "The name of the IAM role (created in the IAM module) to be attached to the MongoDB instance for SSM access."
+}

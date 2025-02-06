@@ -38,7 +38,7 @@ module "bastion" {
 
 module "iam" {
   source            = "./modules/iam"
-  role_name         = "wiz-tasky-mongodb-role"  // or any other role name you want to use
+  role_name         = "wiz-tasky-mongodb-role"
   remediation_mode  = var.remediation_mode
   tags              = local.all_tags
   project_name      = var.project
@@ -55,16 +55,17 @@ module "s3_backup" {
 }
 
 module "mongodb" {
-  source             = "./modules/mongodb"
-  vpc_id             = module.vpc.vpc_id
-  private_subnet_id  = element(module.vpc.private_subnets, 0)
-  instance_type      = "t3.micro"
-  ami_id             = var.mongodb_ami_id
+  source                = "./modules/mongodb"
+  vpc_id                = module.vpc.vpc_id
+  private_subnet_id     = element(module.vpc.private_subnets, 0)
+  instance_type         = "t3.micro"
+  ami_id                = var.mongodb_ami_id
+  remediation_mode      = var.remediation_mode
   mongodb_admin_username = var.mongodb_admin_username
   mongodb_admin_password = var.mongodb_admin_password
-  remediation_mode   = var.remediation_mode
-  tags               = local.all_tags
-  project_name       = var.project
-  environment_name   = var.environment
-  vpc_cidr           = module.vpc.vpc_cidr
+  tags                  = local.all_tags
+  project_name          = var.project
+  environment_name      = var.environment
+  vpc_cidr              = module.vpc.vpc_cidr
+  mongodb_iam_role_name = module.iam.role_name  // Pass IAM role name from IAM module.
 }

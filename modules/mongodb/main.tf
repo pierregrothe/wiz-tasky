@@ -44,6 +44,11 @@ resource "aws_security_group" "mongodb_sg" {
   tags = local.merged_tags
 }
 
+resource "aws_iam_instance_profile" "mongodb_profile" {
+  name = "${var.project_name}-${var.environment_name}-mongodb-profile"
+  role = var.mongodb_iam_role_name
+}
+
 # Read the MongoDB setup script from an external file and replace placeholders.
 data "template_file" "mongodb_setup" {
   template = file("${path.module}/mongodb_setup.sh")
@@ -56,10 +61,11 @@ data "template_file" "mongodb_setup" {
 
 # Launch the MongoDB EC2 instance.
 resource "aws_instance" "mongodb_instance" {
-  ami                    = var.ami_id
-  instance_type          = var.instance_type
-  subnet_id              = var.private_subnet_id
-  key_name               = aws_key_pair.mongodb.key_name   // Updated to use MongoDB key pair
+  ami                         = var.ami_id
+  instance_type               = var.instance_type
+  subnet_id                   = var.private_subnet_id
+  key_name                    = aws_key_pair.mongodb.key_name  # Auto-generated key pair for MongoDB
+  iam_instance_profile        = aws_iam_instance_profile.mongodb_profile.name
   associate_public_ip_address = false
 
   vpc_security_group_ids = [aws_security_group.mongodb_sg.id]
