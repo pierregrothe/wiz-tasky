@@ -110,7 +110,8 @@ jobs:
               --output text \
               --region $AWS_REGION)
             echo "Attempt ${attempt}: $OUTPUT"
-            if echo "$OUTPUT" | grep -q '"ok" : 1'; then
+            # Check for the pattern "ok: 1" without quotes.
+            if echo "$OUTPUT" | grep -q 'ok: 1'; then
               echo "Success: MongoDB is up and responding correctly."
               exit 0
             fi
