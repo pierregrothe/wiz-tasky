@@ -10,6 +10,9 @@ on:
 jobs:
   mongodb-health-check:
     runs-on: ubuntu-latest
+    env:
+      AWS_REGION: ${{ secrets.AWS_REGION }}
+      TF_API_TOKEN: ${{ secrets.TF_API_TOKEN_DEV }}  # Change this dynamically based on branch if needed.
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v3
@@ -27,12 +30,15 @@ jobs:
           if [[ "${GITHUB_REF}" == "refs/heads/dev" ]]; then
             echo "AWS_ACCESS_KEY_ID=${{ secrets.AWS_ACCESS_KEY_ID_DEV }}" >> $GITHUB_ENV
             echo "AWS_SECRET_ACCESS_KEY=${{ secrets.AWS_SECRET_ACCESS_KEY_DEV }}" >> $GITHUB_ENV
+            echo "TF_API_TOKEN=${{ secrets.TF_API_TOKEN_DEV }}" >> $GITHUB_ENV
           elif [[ "${GITHUB_REF}" == "refs/heads/staging" ]]; then
             echo "AWS_ACCESS_KEY_ID=${{ secrets.AWS_ACCESS_KEY_ID_STAGING }}" >> $GITHUB_ENV
             echo "AWS_SECRET_ACCESS_KEY=${{ secrets.AWS_SECRET_ACCESS_KEY_STAGING }}" >> $GITHUB_ENV
+            echo "TF_API_TOKEN=${{ secrets.TF_API_TOKEN_STAGING }}" >> $GITHUB_ENV
           elif [[ "${GITHUB_REF}" == "refs/heads/main" ]]; then
             echo "AWS_ACCESS_KEY_ID=${{ secrets.AWS_ACCESS_KEY_ID_PROD }}" >> $GITHUB_ENV
             echo "AWS_SECRET_ACCESS_KEY=${{ secrets.AWS_SECRET_ACCESS_KEY_PROD }}" >> $GITHUB_ENV
+            echo "TF_API_TOKEN=${{ secrets.TF_API_TOKEN_PROD }}" >> $GITHUB_ENV
           else
             echo "Branch not recognized. Exiting." >&2
             exit 1
@@ -52,7 +58,6 @@ jobs:
       - name: Retrieve MongoDB Instance ID from Terraform Output
         id: get_instance
         run: |
-          # Ensure we're in the correct working directory (root of Terraform config)
           INSTANCE_ID=$(terraform output -raw mongodb_instance_id)
           echo "Instance ID: $INSTANCE_ID"
           echo "instance_id=$INSTANCE_ID" >> $GITHUB_OUTPUT
