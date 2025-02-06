@@ -52,38 +52,41 @@ module "s3_backup" {
 // Generic IAM Module for Bastion Host
 //
 module "iam_bastion" {
-  source            = "./modules/iam"
-  role_name         = "wiz-tasky-bastion-role"
-  assumed_by_service = "ec2.amazonaws.com"
+  source              = "./modules/iam"
+  role_name           = "wiz-tasky-bastion-role"
+  assumed_by_service  = "ec2.amazonaws.com"
   managed_policy_arns = {
     ssm = "arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore"
   }
-  custom_policy_arns = {} 
-  tags              = local.all_tags
-  project_name      = var.project
-  environment_name  = var.environment
-  role_type         = "bastion"
+  inline_policy_file  = "${path.module}/modules/bastion/iam_policy.json"
+  tags                = local.all_tags
+  project_name        = var.project
+  environment_name    = var.environment
+  role_type           = "bastion"
 }
+
+
+
 
 //
 // Generic IAM Module for MongoDB Instance
 //
 module "iam_mongodb" {
-  source = "./modules/iam"
-  role_name         = "wiz-tasky-mongodb-role"
-  assumed_by_service = "ec2.amazonaws.com"
+  source              = "./modules/iam"
+  role_name           = "wiz-tasky-mongodb-role"
+  assumed_by_service  = "ec2.amazonaws.com"
   managed_policy_arns = {
     ssm = "arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore"
   }
-  // Attach a custom policy based on remediation mode.
-  custom_policy_arns = {
-    custom = var.remediation_mode ? "arn:aws:iam::591021320707:policy/mongodb-remediated" : "arn:aws:iam::591021320707:policy/mongodb-misconfigured"
-  }
-  tags              = local.all_tags
-  project_name      = var.project
-  environment_name  = var.environment
-  role_type         = "mongodb"
+  inline_policy_file  = var.remediation_mode ? "${path.module}/modules/mongodb/iam_policy_remediated.json" : "${path.module}/modules/mongodb/iam_policy_misconfigured.json"
+  tags                = local.all_tags
+  project_name        = var.project
+  environment_name    = var.environment
+  role_type           = "mongodb"
 }
+
+
+
 
 //
 // MongoDB Module

@@ -1,4 +1,4 @@
-// File: modules/iam/generic/variables.tf
+// File: modules/iam/variables.tf
 // ---------------------------------------------------------------------------
 // Input Variables for the Generic IAM Module
 // ---------------------------------------------------------------------------
@@ -14,16 +14,16 @@ variable "assumed_by_service" {
   default     = "ec2.amazonaws.com"
 }
 
-variable "custom_policy_arns" {
+variable "managed_policy_arns" {
   type        = map(string)
-  description = "A map of custom policy ARNs to attach to the role (e.g., based on remediation mode)."
+  description = "A map of managed policy ARNs to attach to the role."
   default     = {}
 }
 
-variable "managed_policy_arns" {
-  type        = map(string)
-  description = "A map of managed policy ARNs to attach to the role (e.g., SSM policy)."
-  default     = {}
+variable "inline_policy_json" {
+  type        = string
+  description = "A custom inline policy in JSON format to attach to the role. Leave empty if not used."
+  default     = ""
 }
 
 variable "tags" {
@@ -40,6 +40,12 @@ variable "project_name" {
 variable "environment_name" {
   type        = string
   description = "Deployment environment (e.g., dev, staging, prod)."
+}
+
+variable "inline_policy_file" {
+  type        = string
+  description = "Path to the inline policy JSON file. If provided, its contents will be used as the inline policy."
+  default     = ""
 }
 
 variable "role_type" {
