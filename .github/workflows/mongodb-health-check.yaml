@@ -1,61 +1,68 @@
-name: "MongoDB Health Check via SSM"
+name: "MongoDB Health Check"
 
 on:
   push:
     branches:
       - dev
       - staging
-  workflow_dispatch: {}
 
 jobs:
-  check-mongodb:
-    name: "Check MongoDB Status"
+  mongodb-health-check:
     runs-on: ubuntu-latest
-    env:
-      AWS_REGION: ${{ secrets.AWS_REGION }}
-      # Dynamically set AWS credentials and Terraform settings based on branch.
-      TF_WORKSPACE: ${{ github.ref == 'refs/heads/staging' && 'wiz-tasky-staging' || 'wiz-tasky-dev' }}
-      TF_TOKEN_app_terraform_io: ${{ github.ref == 'refs/heads/staging' && secrets.TF_API_TOKEN_STAGING || secrets.TF_API_TOKEN_DEV }}
-      AWS_ACCESS_KEY_ID: ${{ github.ref == 'refs/heads/staging' && secrets.AWS_ACCESS_KEY_ID_STAGING || github.ref == 'refs/heads/main' && secrets.AWS_ACCESS_KEY_ID_PROD || secrets.AWS_ACCESS_KEY_ID_DEV }}
-      AWS_SECRET_ACCESS_KEY: ${{ github.ref == 'refs/heads/staging' && secrets.AWS_SECRET_ACCESS_KEY_STAGING || github.ref == 'refs/heads/main' && secrets.AWS_SECRET_ACCESS_KEY_PROD || secrets.AWS_SECRET_ACCESS_KEY_DEV }}
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v3
 
-      - name: Setup Terraform
-        uses: hashicorp/setup-terraform@v2
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v2
         with:
-          terraform_version: 1.10.5
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID_DEV }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY_DEV }}
+          aws-region: ${{ secrets.AWS_REGION }}
 
-      - name: Terraform Init
-        run: terraform init
-
-      - name: Retrieve MongoDB Instance ID
-        id: mongodb
-        env:
-          TF_LOG: ERROR
+      - name: Retrieve MongoDB Instance ID from Terraform
+        id: get_instance
         run: |
-          # Capture the output and extract only the first line that matches the instance ID pattern.
-          INSTANCE_ID=$(terraform output -raw mongodb_instance_id 2>/dev/null | grep -oE '^i-[0-9a-f]+')
-          echo "MongoDB Instance ID: ${INSTANCE_ID}"
-          echo "instance_id=${INSTANCE_ID}" >> $GITHUB_OUTPUT
+          # Retrieve the MongoDB instance ID from Terraform output.
+          INSTANCE_ID=$(terraform output -raw mongodb_instance_id)
+          echo "Instance ID: $INSTANCE_ID"
+          echo "instance_id=$INSTANCE_ID" >> $GITHUB_OUTPUT
 
-
-      - name: Run MongoDB Ping via SSM
+      - name: Send SSM Command to MongoDB Instance
+        id: send_command
         run: |
-          INSTANCE_ID="${{ steps.mongodb.outputs.instance_id }}"
-          echo "Running SSM command on MongoDB instance: ${INSTANCE_ID}"
+          INSTANCE_ID=${{ steps.get_instance.outputs.instance_id }}
+          echo "Sending SSM command to instance $INSTANCE_ID"
           COMMAND_ID=$(aws ssm send-command \
             --document-name "AWS-RunShellScript" \
             --targets "Key=instanceids,Values=${INSTANCE_ID}" \
-            --parameters 'commands=["mongo --eval \"db.runCommand({ ping: 1 })\""]' \
+            --parameters commands=["mongosh --quiet --eval 'db.runCommand({ ping: 1 })'"] \
             --timeout-seconds 30 \
             --query "Command.CommandId" \
-            --output text \
-            --region $AWS_REGION)
-          echo "Command ID: ${COMMAND_ID}"
-          sleep 10
-          aws ssm get-command-invocation \
-            --command-id "${COMMAND_ID}" \
-            --instance-id "${INSTANCE_ID}" \
-            --region $AWS_REGION
+            --output text)
+          echo "Command ID: $COMMAND_ID"
+          echo "command_id=$COMMAND_ID" >> $GITHUB_OUTPUT
+
+      - name: Wait for SSM Command and Validate MongoDB Response
+        run: |
+          INSTANCE_ID=${{ steps.get_instance.outputs.instance_id }}
+          COMMAND_ID=${{ steps.send_command.outputs.command_id }}
+          echo "Waiting for SSM command $COMMAND_ID on instance $INSTANCE_ID"
+
+          # Loop for up to 12 attempts (approx. 60 seconds total).
+          for i in {1..12}; do
+            OUTPUT=$(aws ssm get-command-invocation \
+              --command-id "$COMMAND_ID" \
+              --instance-id "$INSTANCE_ID" \
+              --query "StandardOutputContent" \
+              --output text)
+            echo "Attempt $i: $OUTPUT"
+            # Check for the expected output pattern.
+            if echo "$OUTPUT" | grep -q '"ok" : 1'; then
+              echo "MongoDB is up and responding correctly."
+              exit 0
+            fi
+            sleep 5
+          done
+          echo "MongoDB health check failed."
+          exit 1
