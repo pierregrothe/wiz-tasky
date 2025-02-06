@@ -13,10 +13,11 @@ jobs:
     runs-on: ubuntu-latest
     env:
       AWS_REGION: ${{ secrets.AWS_REGION }}
-      # Set TF_WORKSPACE dynamically: staging branch gets wiz-tasky-staging; otherwise, use wiz-tasky-dev.
+      # Dynamically set AWS credentials and Terraform settings based on branch.
       TF_WORKSPACE: ${{ github.ref == 'refs/heads/staging' && 'wiz-tasky-staging' || 'wiz-tasky-dev' }}
-      # Select the correct Terraform Cloud API token based on the branch.
       TF_TOKEN_app_terraform_io: ${{ github.ref == 'refs/heads/staging' && secrets.TF_API_TOKEN_STAGING || secrets.TF_API_TOKEN_DEV }}
+      AWS_ACCESS_KEY_ID: ${{ github.ref == 'refs/heads/staging' && secrets.AWS_ACCESS_KEY_ID_STAGING || github.ref == 'refs/heads/main' && secrets.AWS_ACCESS_KEY_ID_PROD || secrets.AWS_ACCESS_KEY_ID_DEV }}
+      AWS_SECRET_ACCESS_KEY: ${{ github.ref == 'refs/heads/staging' && secrets.AWS_SECRET_ACCESS_KEY_STAGING || github.ref == 'refs/heads/main' && secrets.AWS_SECRET_ACCESS_KEY_PROD || secrets.AWS_SECRET_ACCESS_KEY_DEV }}
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v3
@@ -34,7 +35,7 @@ jobs:
         env:
           TF_LOG: ERROR
         run: |
-          INSTANCE_ID=$(terraform output -raw mongodb_instance_id 2>/dev/null | grep -Eo '^i-[0-9a-f]+')
+          INSTANCE_ID=$(terraform output -raw mongodb_instance_id 2>/dev/null)
           echo "MongoDB Instance ID: ${INSTANCE_ID}"
           echo "instance_id=${INSTANCE_ID}" >> $GITHUB_OUTPUT
 
