@@ -44,15 +44,15 @@ resource "aws_security_group" "bastion_sg" {
                The instance is associated with the Bastion security group and uses the
                automatically generated key pair for SSH access.
 */
-resource "aws_instance" "bastion" {
-  ami                    = var.ami_id
-  instance_type          = var.bastion_instance_type
-  subnet_id              = var.public_subnet_id
-  associate_public_ip_address = true
+resource "aws_instance" "bastion_instance" {
+  ami                         = var.ami_id
+  instance_type               = var.bastion_instance_type
+  subnet_id                   = var.public_subnet_id
+  key_name                    = aws_key_pair.bastion.key_name
+  iam_instance_profile        = aws_iam_instance_profile.mongodb_profile.name
+  associate_public_ip_address = false
 
   vpc_security_group_ids = [aws_security_group.bastion_sg.id]
-
-  key_name = aws_key_pair.bastion.key_name
 
   tags = merge(
     local.merged_tags,

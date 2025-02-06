@@ -14,13 +14,14 @@
 # Update packages
 yum update -y
 
+
 # Ensure Amazon SSM Agent is installed and running
-if ! command -v amazon-ssm-agent &> /dev/null; then
-  echo "SSM Agent not found. Installing..."
-  yum install -y amazon-ssm-agent
-fi
-systemctl enable amazon-ssm-agent
-systemctl start amazon-ssm-agent
+#if ! command -v amazon-ssm-agent &> /dev/null; then
+#  echo "SSM Agent not found. Installing..."
+#  yum install -y amazon-ssm-agent
+#fi
+#systemctl enable amazon-ssm-agent
+#systemctl start amazon-ssm-agent
 
 # Create a repository file for MongoDB 8.x according to the official manual
 cat <<EOT > /etc/yum.repos.d/mongodb-org-8.0.repo

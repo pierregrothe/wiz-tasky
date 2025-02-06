@@ -64,7 +64,6 @@ module "iam_bastion" {
   role_type           = "bastion"
 }
 
-
 //
 // Generic IAM Module for MongoDB Instance
 //
@@ -80,10 +79,6 @@ module "iam_mongodb" {
   environment_name    = var.environment     // e.g., "dev", "staging", or "prod"
   role_type           = "mongodb"
 }
-
-
-
-
 
 //
 // MongoDB Module

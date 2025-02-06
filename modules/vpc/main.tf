@@ -7,6 +7,8 @@
 // tag merging strategy using `local.merged_tags`.
 // ---------------------------------------------------------------------------
 
+data "aws_region" "current" {}
+
 /*
   Resource: aws_vpc.main
   Description: Creates the primary VPC using the provided CIDR block.
@@ -154,4 +156,79 @@ resource "aws_route_table_association" "private" {
   count          = length(var.private_subnets_cidr)
   subnet_id      = aws_subnet.private[count.index].id
   route_table_id = aws_route_table.private.id
+}
+
+// ---------------------------------------------------------------------------
+// VPC Endpoints Configuration for SSM and Related Services
+// ---------------------------------------------------------------------------
+
+// Create a security group for the VPC endpoints that allows outbound and inbound HTTPS (443)
+// from the instance security groups (modify the ingress/egress as needed).
+resource "aws_security_group" "vpc_endpoints_sg" {
+  name        = "${var.environment_name}-vpc-endpoints-sg"
+  description = "Security group for VPC endpoints (SSM, EC2 Messages, SSM Messages)"
+  vpc_id      = aws_vpc.main.id
+
+  ingress {
+    description = "Allow inbound HTTPS from instances"
+    from_port   = 443
+    to_port     = 443
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]  // Adjust this to restrict traffic as needed.
+  }
+
+  egress {
+    description = "Allow outbound HTTPS to instances"
+    from_port   = 443
+    to_port     = 443
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  tags = merge(
+    local.merged_tags,
+    { Name = "${var.environment_name}-vpc-endpoints-sg" }
+  )
+}
+
+// Create VPC endpoint for SSM
+resource "aws_vpc_endpoint" "ssm" {
+  vpc_id            = aws_vpc.main.id
+  service_name      = "com.amazonaws.${data.aws_region.current.name}.ssm"
+  vpc_endpoint_type = "Interface"
+  subnet_ids        = aws_subnet.private[*].id
+  security_group_ids = [aws_security_group.vpc_endpoints_sg.id]
+
+  tags = merge(
+    local.merged_tags,
+    { Name = "${var.environment_name}-ssm-endpoint" }
+  )
+}
+
+// Create VPC endpoint for EC2 messages
+resource "aws_vpc_endpoint" "ec2messages" {
+  vpc_id            = aws_vpc.main.id
+  service_name      = "com.amazonaws.${data.aws_region.current.name}.ec2messages"
+  vpc_endpoint_type = "Interface"
+  subnet_ids        = aws_subnet.private[*].id
+  security_group_ids = [aws_security_group.vpc_endpoints_sg.id]
+
+  tags = merge(
+    local.merged_tags,
+    { Name = "${var.environment_name}-ec2messages-endpoint" }
+  )
+}
+
+// Create VPC endpoint for SSM messages
+resource "aws_vpc_endpoint" "ssmmessages" {
+  vpc_id            = aws_vpc.main.id
+  service_name      = "com.amazonaws.${data.aws_region.current.name}.ssmmessages"
+  vpc_endpoint_type = "Interface"
+  subnet_ids        = aws_subnet.private[*].id
+  security_group_ids = [aws_security_group.vpc_endpoints_sg.id]
+
+  tags = merge(
+    local.merged_tags,
+    { Name = "${var.environment_name}-ssmmessages-endpoint" }
+  )
 }
