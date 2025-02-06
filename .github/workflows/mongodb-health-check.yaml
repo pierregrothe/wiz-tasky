@@ -50,21 +50,17 @@ jobs:
       - name: Retrieve MongoDB Instance ID
         id: mongodb
         run: |
-          # Capture the complete output from terraform output, which may include debug info.
+          # Capture the full output (including any debug messages).
           RAW_OUTPUT=$(terraform output -raw mongodb_instance_id 2>/dev/null)
           echo "Raw output: $RAW_OUTPUT"
-          
-          # Use grep to extract the instance ID (assumes it starts with "i-" followed by hex characters).
-          INSTANCE_ID=$(echo "$RAW_OUTPUT" | grep -oE 'i-[0-9a-f]+')
-          
+          # Extract only the first match for an EC2 instance ID (e.g., "i-123abc...").
+          INSTANCE_ID=$(echo "$RAW_OUTPUT" | grep -oE 'i-[0-9a-f]+' | head -n1)
           if [ -z "$INSTANCE_ID" ]; then
             echo "Error: Could not extract a valid instance ID from the output."
             exit 1
           fi
-          
-          echo "MongoDB Instance ID: $INSTANCE_ID"
-          echo "instance_id=$INSTANCE_ID" >> $GITHUB_OUTPUT
-
+          echo "MongoDB Instance ID: ${INSTANCE_ID}"
+          echo "instance_id=${INSTANCE_ID}" >> $GITHUB_OUTPUT
 
       # Wait for the MongoDB instance to appear in SSM as Online.
       - name: Wait for MongoDB Instance to be Registered in SSM
