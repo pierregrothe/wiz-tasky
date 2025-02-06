@@ -1,65 +1,64 @@
-/*
-  File: modules/eks/variables.tf
-  Purpose:
-    - Define input variables for the EKS module.
-*/
+// File: modules/eks/variables.tf
+// ---------------------------------------------------------------------------
+// Input Variables for the EKS Module for wiz-tasky Project
+// ---------------------------------------------------------------------------
 
 variable "project_name" {
   type        = string
-  description = "Project name used for naming resources."
+  description = "Project name for resource naming (e.g., wiz-tasky)"
 }
 
 variable "environment_name" {
   type        = string
-  description = "Deployment environment (e.g., dev, staging, prod) used for naming resources."
+  description = "Deployment environment (e.g., dev, staging, prod)"
 }
 
 variable "tags" {
   type        = map(string)
-  description = "Base tags applied to resources (merged from Terraform Cloud variables)."
+  description = "Base tags to apply to EKS resources"
 }
 
 variable "subnet_ids" {
   type        = list(string)
-  description = "List of subnet IDs to use for the EKS cluster (typically public subnets from your VPC module)."
+  description = "List of subnet IDs where the EKS cluster will be deployed (typically public subnets)"
 }
 
 variable "cluster_role_arn" {
   type        = string
-  description = "ARN of the IAM role to be used by the EKS cluster."
+  description = "IAM role ARN for the EKS cluster"
 }
 
 variable "eks_version" {
   type        = string
-  description = "Kubernetes version for the EKS cluster."
-  default     = "1.21"  // Adjust as needed.
+  description = "Kubernetes version for the EKS cluster"
+  default     = "1.32"  // Adjust as needed.
 }
 
 variable "node_role_arn" {
   type        = string
-  description = "ARN of the IAM role to be used by the EKS node group."
+  description = "IAM role ARN for the EKS node group"
 }
 
 variable "desired_size" {
   type        = number
-  description = "Desired number of worker nodes."
-  default     = 2
+  description = "Desired number of nodes in the EKS node group"
+  default     = 1
 }
 
 variable "min_size" {
   type        = number
-  description = "Minimum number of worker nodes."
+  description = "Minimum number of nodes in the EKS node group"
   default     = 1
 }
 
 variable "max_size" {
   type        = number
-  description = "Maximum number of worker nodes."
+  description = "Maximum number of nodes in the EKS node group"
   default     = 1
 }
 
 variable "instance_types" {
   type        = list(string)
-  description = "EC2 instance types for the EKS node group."
+  description = "List of EC2 instance types for the EKS node group"
   default     = ["t3.medium"]
 }

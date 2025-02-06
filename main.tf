@@ -105,7 +105,7 @@ module "iam_bastion" {
 // Dynamically creates a custom IAM role for the EKS cluster.
 // The remediation_mode flag selects between a secure policy (AmazonEKSClusterPolicy)
 // and a misconfigured (more permissive) policy (AdministratorAccess).
-module "iam_eks" {
+module "iam_eks_cluster" {
   source             = "./modules/iam"
   assumed_by_service = "eks.amazonaws.com"
   managed_policy_arns = {
@@ -116,8 +116,31 @@ module "iam_eks" {
   tags               = local.all_tags
   project_name       = local.all_tags["project"]
   environment_name   = local.all_tags["environment"]
-  role_type          = "eks"
+  role_type          = "eks_cluster"
 }
+
+//
+// Generic IAM Module for EKS Node Group
+// Dynamically creates a custom IAM role for the EKS node group.
+// This role is assumed by EC2 instances (the worker nodes) and attaches the necessary
+// managed policies for running EKS worker nodes, including read-only access to ECR and 
+// the Amazon EKS CNI Policy.
+//
+module "iam_eks_node" {
+  source             = "./modules/iam"
+  assumed_by_service = "ec2.amazonaws.com"
+  managed_policy_arns = {
+    eks_worker_node_policy = "arn:aws:iam::aws:policy/AmazonEKSWorkerNodePolicy"
+    ecr_read_only_policy   = "arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly"
+    cni_policy             = "arn:aws:iam::aws:policy/AmazonEKS_CNI_Policy"
+  }
+  inline_policy_file = ""  # No inline policy provided for nodes; managed policies suffice.
+  tags               = local.all_tags
+  project_name       = local.all_tags["project"]
+  environment_name   = local.all_tags["environment"]
+  role_type          = "eks_node"
+}
+
 
 //
 // Generic IAM Module for MongoDB Instance
@@ -171,8 +194,8 @@ module "eks" {
   environment_name  = local.all_tags["environment"]
   tags              = local.all_tags
   subnet_ids        = module.vpc.public_subnets  // Deploy the cluster in public subnets.
-  cluster_role_arn  = module.iam_eks.role_arn      // Custom IAM role for the cluster.
-  node_role_arn     = var.eks_node_role_arn        // Provided as a variable or created via another module.
+  cluster_role_arn  = module.iam_eks_cluster.role_arn     // Custom IAM role for the cluster.
+  node_role_arn     = module.iam_eks_node.role_arn       // Provided as a variable or created via another module.
   eks_version       = var.eks_version
   desired_size      = var.eks_desired_size
   min_size          = var.eks_min_size

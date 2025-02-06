@@ -1,14 +1,21 @@
-/*
-  File: modules/eks/main.tf
-  Purpose:
-    - Create an Amazon EKS cluster.
-    - Create a managed node group associated with the cluster.
-  Notes:
-    - The cluster and node group names are dynamically generated using
-      the provided project and environment names.
-    - The cluster uses the specified subnets (typically the public subnets from the VPC module).
-*/
+// File: modules/eks/main.tf
+// ---------------------------------------------------------------------------
+// EKS Module for wiz-tasky Project
+//
+// This module provisions an Amazon EKS cluster along with a managed node group.
+// It leverages dynamic naming based on the project and environment values,
+// reads configuration from external variables, and applies merged tags for
+// consistency across environments.
+// ---------------------------------------------------------------------------
 
+/*
+  EKS Cluster:
+  Purpose:
+    - Creates an EKS cluster with the specified Kubernetes version.
+    - The cluster is deployed using the provided subnets.
+    - The IAM role (cluster_role_arn) used by the cluster is created externally.
+    - Tags are merged to include project and environment information.
+*/
 resource "aws_eks_cluster" "this" {
   name     = "${var.project_name}-${var.environment_name}-eks"
   role_arn = var.cluster_role_arn
@@ -29,6 +36,14 @@ resource "aws_eks_cluster" "this" {
   )
 }
 
+/*
+  EKS Managed Node Group:
+  Purpose:
+    - Creates a managed node group for the EKS cluster.
+    - Uses the provided instance types, scaling configuration, and IAM role for nodes.
+    - The node group name is dynamically constructed using project and environment values.
+    - Tags are applied for identification and resource grouping.
+*/
 resource "aws_eks_node_group" "this" {
   cluster_name    = aws_eks_cluster.this.name
   node_group_name = "${var.project_name}-${var.environment_name}-node-group"

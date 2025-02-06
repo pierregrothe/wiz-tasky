@@ -1,8 +1,8 @@
-/*
-  File: modules/eks/outputs.tf
-  Purpose:
-    - Output key details of the EKS cluster and node group for use in other modules.
-*/
+// File: modules/eks/outputs.tf
+// ---------------------------------------------------------------------------
+// Outputs for the EKS Module for wiz-tasky Project
+// Exposes key details of the EKS cluster and node group for further integration.
+// ---------------------------------------------------------------------------
 
 output "cluster_name" {
   description = "The name of the EKS cluster."
@@ -10,7 +10,7 @@ output "cluster_name" {
 }
 
 output "cluster_endpoint" {
-  description = "The endpoint for the EKS cluster."
+  description = "The endpoint URL of the EKS cluster."
   value       = aws_eks_cluster.this.endpoint
 }
 
