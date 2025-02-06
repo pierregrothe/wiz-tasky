@@ -12,10 +12,8 @@ jobs:
     name: "Check MongoDB Status"
     runs-on: ubuntu-latest
     env:
-      AWS_REGION: ${{ secrets.AWS_REGION }}
-      # Set TF_WORKSPACE dynamically: if branch is staging, use wiz-tasky-staging, otherwise default to wiz-tasky-dev.
+      AWS_REGION: ${{ secrets.AWS_REGION }}  # Ensure this secret is set in your repo
       TF_WORKSPACE: ${{ github.ref == 'refs/heads/staging' && 'wiz-tasky-staging' || 'wiz-tasky-dev' }}
-      # Similarly, select the appropriate Terraform Cloud API token.
       TF_TOKEN_app_terraform_io: ${{ github.ref == 'refs/heads/staging' && secrets.TF_API_TOKEN_STAGING || secrets.TF_API_TOKEN_DEV }}
     steps:
       - name: Checkout Repository
@@ -33,12 +31,12 @@ jobs:
         id: mongodb
         run: |
           INSTANCE_ID=$(terraform output -raw mongodb_instance_id)
+          echo "MongoDB Instance ID: $INSTANCE_ID"
           echo "::set-output name=instance_id::$INSTANCE_ID"
       
       - name: Run MongoDB Ping via SSM
-        env:
-          INSTANCE_ID: ${{ steps.mongodb.outputs.instance_id }}
         run: |
+          INSTANCE_ID=${{ steps.mongodb.outputs.instance_id }}
           echo "Running SSM command on MongoDB instance: $INSTANCE_ID"
           COMMAND_ID=$(aws ssm send-command \
             --document-name "AWS-RunShellScript" \
