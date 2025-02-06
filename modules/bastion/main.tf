@@ -44,7 +44,7 @@ resource "aws_security_group" "bastion_sg" {
                The instance is associated with the Bastion security group and uses the
                automatically generated key pair for SSH access.
 */
-resource "aws_instance" "bastion_instance" {
+resource "aws_instance" "bastion" {
   ami                         = var.ami_id
   instance_type               = var.bastion_instance_type
   subnet_id                   = var.public_subnet_id
