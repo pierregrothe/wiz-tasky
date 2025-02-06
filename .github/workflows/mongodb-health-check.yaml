@@ -35,9 +35,11 @@ jobs:
         env:
           TF_LOG: ERROR
         run: |
-          INSTANCE_ID=$(terraform output -raw mongodb_instance_id 2>/dev/null)
+          # Capture the output and extract only the first line that matches the instance ID pattern.
+          INSTANCE_ID=$(terraform output -raw mongodb_instance_id 2>/dev/null | grep -oE '^i-[0-9a-f]+')
           echo "MongoDB Instance ID: ${INSTANCE_ID}"
           echo "instance_id=${INSTANCE_ID}" >> $GITHUB_OUTPUT
+
 
       - name: Run MongoDB Ping via SSM
         run: |
