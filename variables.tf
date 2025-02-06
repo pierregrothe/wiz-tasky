@@ -1,6 +1,11 @@
 // File: variables.tf
-// Global variables for the wiz-tasky project
+// ---------------------------------------------------------------------------
+// Global Variables for the wiz-tasky Project
+// ---------------------------------------------------------------------------
 
+// -------------------------
+// Project and Environment
+// -------------------------
 variable "project_name" {
   type        = string
   description = "Project name (e.g., wiz-tasky)"
@@ -25,24 +30,31 @@ variable "assessment_mode" {
   default     = false
 }
 
+// -------------------------
+// Tagging Variables
+// -------------------------
 variable "tags_default" {
   type        = map(string)
-  description = "Default tags for all resources"
-  default = {
-    project    = "wiz-tasky"
-    managed_by = "Terraform"
+  description = "Default tags for all resources (e.g., { owner = 'pgrothe', team = 'DevOps', cost-center = 'CC-1234', managed-by = 'Terraform' })"
+  default     = {
+    owner      = "pgrothe"
+    team       = "DevOps"
+    cost-center = "CC-1234"
+    managed-by = "Terraform"
   }
 }
 
 variable "tags_env" {
   type        = map(string)
-  description = "Environment-specific tags"
-  default = {
-    environment = "dev"
+  description = "Environment-specific tags (e.g., { managed-by = 'Terraform' })"
+  default     = {
+    managed-by = "Terraform"
   }
 }
 
-// VPC configuration variables
+// -------------------------
+// VPC Configuration
+// -------------------------
 variable "vpc_cidr" {
   type        = string
   description = "CIDR block for the VPC"
@@ -67,8 +79,9 @@ variable "availability_zones" {
   default     = ["us-east-2a", "us-east-2b"]
 }
 
-// Additional Bastion Host variables
-
+// -------------------------
+// Bastion Host Configuration
+// -------------------------
 variable "bastion_instance_type" {
   type        = string
   description = "EC2 instance type for the Bastion host."
@@ -81,19 +94,24 @@ variable "bastion_ami_id" {
   default     = "ami-018875e7376831abe"
 }
 
-
 variable "bastion_allowed_ssh_ip" {
   type        = string
-  description = "Allowed CIDR for SSH access to the Bastion host (e.g., 70.53.172.107/32)"
-  default     = "70.53.172.107/32" // Set your default IP here
+  description = "Allowed CIDR for SSH access to the Bastion host (e.g., 70.53.172.107/32)."
+  default     = "70.53.172.107/32"
 }
 
+// -------------------------
+// Global Remediation Mode
+// -------------------------
 variable "remediation_mode" {
   type        = bool
   description = "Set to true to deploy a remediated (secure) configuration; false to deploy intentionally misconfigured resources for assessment."
   default     = false
 }
 
+// -------------------------
+// MongoDB Configuration
+// -------------------------
 variable "mongodb_ami_id" {
   type        = string
   description = "AMI ID to use for the MongoDB EC2 instance"
@@ -111,10 +129,46 @@ variable "mongodb_admin_password" {
   sensitive   = true
 }
 
-// Additional MongoDB Host variables
-
 variable "mongodb_instance_type" {
   type        = string
   description = "EC2 instance type for the MongoDB host."
   default     = "t3.micro"
+}
+
+// -------------------------
+// EKS Configuration
+// -------------------------
+variable "eks_version" {
+  type        = string
+  description = "Kubernetes version for the EKS cluster."
+  default     = "1.32" // Adjust as needed.
+}
+
+variable "eks_node_role_arn" {
+  type        = string
+  description = "ARN of the IAM role for the EKS node group."
+}
+
+variable "eks_desired_size" {
+  type        = number
+  description = "Desired number of worker nodes in the EKS node group."
+  default     = 1
+}
+
+variable "eks_min_size" {
+  type        = number
+  description = "Minimum number of worker nodes in the EKS node group."
+  default     = 1
+}
+
+variable "eks_max_size" {
+  type        = number
+  description = "Maximum number of worker nodes in the EKS node group."
+  default     = 1
+}
+
+variable "eks_instance_types" {
+  type        = list(string)
+  description = "List of EC2 instance types for the EKS node group."
+  default     = ["t3.medium"]
 }

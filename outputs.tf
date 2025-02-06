@@ -60,3 +60,13 @@ output "mongodb_connection_string_file" {
   description = "The file path on the MongoDB instance containing the connection string."
   value       = module.mongodb.mongodb_connection_string_file
 }
+
+output "eks_cluster_name" {
+  description = "The name of the EKS cluster."
+  value       = module.eks.cluster_name
+}
+
+output "eks_cluster_endpoint" {
+  description = "The endpoint URL of the EKS cluster."
+  value       = module.eks.cluster_endpoint
+}
