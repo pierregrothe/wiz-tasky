@@ -52,13 +52,13 @@ module "s3_backup" {
 // Generic IAM Module for Bastion Host
 //
 module "iam_bastion" {
-  source = "./modules/iam/generic"
+  source            = "./modules/iam"
   role_name         = "wiz-tasky-bastion-role"
   assumed_by_service = "ec2.amazonaws.com"
   managed_policy_arns = {
     ssm = "arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore"
   }
-  custom_policy_arns = {}  // No custom policies for Bastion in this example.
+  custom_policy_arns = {} 
   tags              = local.all_tags
   project_name      = var.project
   environment_name  = var.environment
@@ -69,7 +69,7 @@ module "iam_bastion" {
 // Generic IAM Module for MongoDB Instance
 //
 module "iam_mongodb" {
-  source = "./modules/iam/generic"
+  source = "./modules/iam"
   role_name         = "wiz-tasky-mongodb-role"
   assumed_by_service = "ec2.amazonaws.com"
   managed_policy_arns = {

@@ -1,8 +1,8 @@
-// File: modules/iam/tags.tf
+// File: modules/iam/generic/tags.tf
 // ---------------------------------------------------------------------------
-// Tagging Helper for the IAM Module
-// This file defines a local variable that merges the base tags passed in via
-// the "tags" variable with explicit project and environment tags.
+// Tagging Helper for the Generic IAM Module
+// This file defines a local variable `merged_tags` that merges the base tags
+// provided via the variable `tags` with additional project and environment tags.
 // ---------------------------------------------------------------------------
 
 locals {

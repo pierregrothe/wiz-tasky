@@ -1,7 +1,7 @@
-// File: modules/iam/outputs.tf
+// File: modules/iam/generic/outputs.tf
 // ---------------------------------------------------------------------------
-// Outputs for the IAM Module
-// Exposes the ARN of the created IAM role so other modules can reference it.
+// Outputs for the Generic IAM Module
+// Exposes the ARN and name of the created IAM role for reference in other modules.
 // ---------------------------------------------------------------------------
 
 output "role_arn" {
