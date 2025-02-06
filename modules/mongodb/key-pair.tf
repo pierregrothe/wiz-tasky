@@ -17,7 +17,7 @@ resource "aws_key_pair" "mongodb" {
   public_key = tls_private_key.mongodb.public_key_openssh
 
   tags = merge(
-    local.merged_tags,
+    var.tags,
     { Name = "${var.project_name}-${var.environment_name}-mongodb-key" }
   )
 }
