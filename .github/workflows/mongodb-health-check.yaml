@@ -12,7 +12,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       AWS_REGION: ${{ secrets.AWS_REGION }}
-      TF_API_TOKEN: ${{ secrets.TF_API_TOKEN_DEV }}  # Change this dynamically based on branch if needed.
+      TF_API_TOKEN: ${{ secrets.TF_API_TOKEN_DEV }}  # This will be set dynamically based on your branch below
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v3
@@ -22,9 +22,9 @@ jobs:
         with:
           terraform_version: "1.10.5"
 
-      # Set AWS credentials based on branch
-      - name: Set AWS credentials based on branch
-        id: set_aws_creds
+      # Set AWS and Terraform Cloud credentials based on branch
+      - name: Set AWS and TF Cloud Credentials Based on Branch
+        id: set_creds
         run: |
           echo "Current branch: ${GITHUB_REF}"
           if [[ "${GITHUB_REF}" == "refs/heads/dev" ]]; then
@@ -51,6 +51,10 @@ jobs:
           aws-secret-access-key: ${{ env.AWS_SECRET_ACCESS_KEY }}
           aws-region: ${{ secrets.AWS_REGION }}
           audience: sts.amazonaws.com
+
+      # New step: Log in to Terraform Cloud using the API token.
+      - name: Terraform Login
+        run: terraform login -t ${{ env.TF_API_TOKEN }}
 
       - name: Terraform Init
         run: terraform init
