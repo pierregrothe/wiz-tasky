@@ -64,7 +64,7 @@ resource "aws_instance" "mongodb_instance" {
 
   vpc_security_group_ids = [aws_security_group.mongodb_sg.id]
 
-  user_data = data.template_file.mongodb_userdata.rendered
+  user_data = data.template_file.mongodb_setup.rendered
 
   tags = merge(
     local.merged_tags,
