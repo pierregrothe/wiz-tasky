@@ -58,7 +58,7 @@ module "mongodb" {
   source             = "./modules/mongodb"
   vpc_id             = module.vpc.vpc_id
   private_subnet_id  = element(module.vpc.private_subnets, 0)
-  instance_type      = "t3.micro"           // You can also declare as a variable.
+  instance_type      = "t3.micro"
   ami_id             = var.mongodb_ami_id
   mongodb_admin_username = var.mongodb_admin_username
   mongodb_admin_password = var.mongodb_admin_password
@@ -66,5 +66,5 @@ module "mongodb" {
   tags               = local.all_tags
   project_name       = var.project
   environment_name   = var.environment
-  vpc_cidr           = module.vpc.vpc_cidr  // Pass the VPC CIDR here.
+  vpc_cidr           = module.vpc.vpc_cidr
 }
