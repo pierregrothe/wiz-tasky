@@ -68,9 +68,3 @@ module "mongodb" {
   environment_name   = var.environment
   vpc_cidr           = module.vpc.vpc_cidr  // Pass the VPC CIDR here.
 }
-
-// Additional variables needed by other modules (if not declared elsewhere)
-variable "key_name" {
-  type        = string
-  description = "Name of the EC2 key pair for SSH access"
-}
