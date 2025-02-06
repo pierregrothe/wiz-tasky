@@ -1,7 +1,9 @@
 // File: outputs.tf
 // ---------------------------------------------------------------------------
 // Root Outputs for the wiz-tasky Project
-// Exposes key outputs from the modules for reference.
+// These outputs provide key resource IDs from the modules.
+// When using count on a module, the outputs are returned as a list.
+// We index them to retrieve the first (and only) element in non-prod environments.
 // ---------------------------------------------------------------------------
 
 output "vpc_id" {
@@ -20,18 +22,18 @@ output "private_subnets" {
 }
 
 output "bastion_instance_id" {
-  description = "The ID of the Bastion host instance."
-  value       = module.bastion.bastion_instance_id
+  description = "The instance ID of the Bastion host (non-prod)."
+  value       = var.environment == "prod" ? "Not Deployed" : module.bastion[0].bastion_instance_id
 }
 
 output "bastion_public_ip" {
-  description = "The public IP address of the Bastion host."
-  value       = module.bastion.bastion_public_ip
+  description = "The public IP of the Bastion host (non-prod)."
+  value       = var.environment == "prod" ? "Not Deployed" : module.bastion[0].bastion_public_ip
 }
 
 output "bastion_role_arn" {
-  description = "The ARN of the Bastion IAM role."
-  value       = module.iam_bastion.role_arn
+  description = "The ARN of the Bastion IAM role (non-prod)."
+  value       = var.environment == "prod" ? "Not Deployed" : module.iam_bastion[0].role_arn
 }
 
 output "mongodb_role_arn" {
