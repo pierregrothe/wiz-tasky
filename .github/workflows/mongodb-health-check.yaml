@@ -31,9 +31,10 @@ jobs:
 
       - name: Retrieve MongoDB Instance ID
         id: mongodb
+        env:
+          TF_LOG: ERROR
         run: |
-          # Using JSON output and jq to extract the raw string value.
-          INSTANCE_ID=$(terraform output -json mongodb_instance_id | jq -r .)
+          INSTANCE_ID=$(terraform output -raw mongodb_instance_id)
           echo "MongoDB Instance ID: ${INSTANCE_ID}"
           echo "instance_id=${INSTANCE_ID}" >> $GITHUB_OUTPUT
 
