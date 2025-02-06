@@ -32,12 +32,12 @@ jobs:
 
       - name: Retrieve MongoDB Instance ID
         id: mongodb
-        env:
-          TF_LOG: ERROR
         run: |
+          unset TF_LOG
           INSTANCE_ID=$(terraform output -raw mongodb_instance_id 2>/dev/null)
           echo "MongoDB Instance ID: ${INSTANCE_ID}"
           echo "instance_id=${INSTANCE_ID}" >> $GITHUB_OUTPUT
+
 
       - name: Run MongoDB Ping via SSM
         run: |
