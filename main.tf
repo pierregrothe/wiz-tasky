@@ -28,10 +28,10 @@ module "vpc" {
   availability_zones   = var.availability_zones
 
   // Derive dynamic names from merged tags.
-  project_name     = local.merged_tags["project"]
-  environment_name = local.merged_tags["environment"]
+  project_name     = local.all_tags["project"]
+  environment_name = local.all_tags["environment"]
 
-  tags = local.merged_tags
+  tags = local.all_tags
 }
 
 //
@@ -56,9 +56,9 @@ module "bastion" {
   // Allowed SSH IPs should be provided as a list.
   allowed_ssh_ips       = [var.bastion_allowed_ssh_ip]
 
-  project_name     = local.merged_tags["project"]
-  environment_name = local.merged_tags["environment"]
-  tags             = local.merged_tags
+  project_name     = local.all_tags["project"]
+  environment_name = local.all_tags["environment"]
+  tags             = local.all_tags
 
   // Additional variable for Bastion if required by the module.
   bastion_allowed_ssh_ip = var.bastion_allowed_ssh_ip
@@ -71,11 +71,11 @@ module "bastion" {
 // ---------------------------------------------------------------------------
 module "s3_backup" {
   source           = "./modules/s3-backup"
-  bucket_name      = "${var.project}-${var.environment}-backups"
+  bucket_name      = "${local.all_tags["project"]}-${local.all_tags["environment"]}-backups"
   remediation_mode = var.remediation_mode
-  tags             = local.merged_tags
-  project_name     = local.merged_tags["project"]
-  environment_name = local.merged_tags["environment"]
+  tags             = local.all_tags
+  project_name     = local.all_tags["project"]
+  environment_name = local.all_tags["environment"]
 }
 
 //
@@ -94,9 +94,9 @@ module "iam_bastion" {
   }
   // No inline policy needed for Bastion, so this is an empty string.
   inline_policy_file  = ""
-  tags                = local.merged_tags
-  project_name        = local.merged_tags["project"]
-  environment_name    = local.merged_tags["environment"]
+  tags                = local.all_tags
+  project_name        = local.all_tags["project"]
+  environment_name    = local.all_tags["environment"]
   role_type           = "bastion"
 }
 
@@ -113,9 +113,9 @@ module "iam_mongodb" {
     ssm = "arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore"
   }
   inline_policy_file  = var.remediation_mode ? "${path.module}/modules/mongodb/iam_policy_remediated.json" : "${path.module}/modules/mongodb/iam_policy_misconfigured.json"
-  tags                = local.merged_tags
-  project_name        = local.merged_tags["project"]
-  environment_name    = local.merged_tags["environment"]
+  tags                = local.all_tags
+  project_name        = local.all_tags["project"]
+  environment_name    = local.all_tags["environment"]
   role_type           = "mongodb"
 }
 
@@ -134,9 +134,9 @@ module "mongodb" {
   remediation_mode      = var.remediation_mode
   mongodb_admin_username = var.mongodb_admin_username
   mongodb_admin_password = var.mongodb_admin_password
-  tags                  = local.merged_tags
-  project_name          = local.merged_tags["project"]
-  environment_name      = local.merged_tags["environment"]
+  tags                  = local.all_tags
+  project_name          = local.all_tags["project"]
+  environment_name      = local.all_tags["environment"]
   vpc_cidr              = module.vpc.vpc_cidr
   mongodb_iam_role_name = module.iam_mongodb.role_name
 }

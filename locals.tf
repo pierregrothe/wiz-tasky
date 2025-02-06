@@ -13,7 +13,7 @@ locals {
   all_tags = merge(
     local.base_tags,
     {
-      project       = var.project,
+      project       = var.project_name,
       environment   = var.environment,
       "cost-center" = lookup(local.base_tags, "cost-center", "CC-9999")
     }

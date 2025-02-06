@@ -1,7 +1,7 @@
 // File: variables.tf
 // Global variables for the wiz-tasky project
 
-variable "project" {
+variable "project_name" {
   type        = string
   description = "Project name (e.g., wiz-tasky)"
   default     = "wiz-tasky"
