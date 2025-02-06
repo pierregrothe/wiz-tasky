@@ -67,5 +67,5 @@ module "mongodb" {
   project_name          = var.project
   environment_name      = var.environment
   vpc_cidr              = module.vpc.vpc_cidr
-  mongodb_iam_role_name = module.iam.role_name  // Pass IAM role name from IAM module.
+  mongodb_iam_role_name = module.iam.role_name
 }
