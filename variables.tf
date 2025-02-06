@@ -93,3 +93,19 @@ variable "remediation_mode" {
   description = "Set to true to deploy a remediated (secure) configuration; false to deploy intentionally misconfigured resources for assessment."
   default     = false
 }
+
+variable "mongodb_ami_id" {
+  type        = string
+  description = "AMI ID to use for the MongoDB EC2 instance"
+}
+
+variable "mongodb_admin_username" {
+  type        = string
+  description = "MongoDB admin username"
+}
+
+variable "mongodb_admin_password" {
+  type        = string
+  description = "MongoDB admin password"
+  sensitive   = true
+}

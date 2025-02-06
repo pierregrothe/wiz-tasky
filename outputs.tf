@@ -46,3 +46,13 @@ output "s3_bucket_arn" {
   description = "The ARN of the S3 backup bucket."
   value       = module.s3_backup.bucket_arn
 }
+
+output "mongodb_instance_id" {
+  description = "The ID of the MongoDB EC2 instance."
+  value       = module.mongodb.mongodb_instance_id
+}
+
+output "mongodb_connection_string_file" {
+  description = "The file path on the MongoDB instance containing the connection string."
+  value       = module.mongodb.mongodb_connection_string_file
+}

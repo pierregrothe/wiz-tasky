@@ -53,3 +53,24 @@ module "s3_backup" {
   project_name     = var.project
   environment_name = var.environment
 }
+
+module "mongodb" {
+  source             = "./modules/mongodb"
+  vpc_id             = module.vpc.vpc_id
+  private_subnet_id  = element(module.vpc.private_subnets, 0)
+  instance_type      = "t3.micro"           // You can also declare as a variable.
+  ami_id             = var.mongodb_ami_id
+  key_name           = var.key_name
+  mongodb_admin_username = var.mongodb_admin_username
+  mongodb_admin_password = var.mongodb_admin_password
+  remediation_mode   = var.remediation_mode
+  tags               = local.all_tags
+  project_name       = var.project
+  environment_name   = var.environment
+}
+
+// Additional variables needed by other modules (if not declared elsewhere)
+variable "key_name" {
+  type        = string
+  description = "Name of the EC2 key pair for SSH access"
+}

@@ -1,13 +1,16 @@
-# wiz-tasky/modules/mongodb/tags.tf
+// File: modules/mongodb/tags.tf
+// ---------------------------------------------------------------------------
+// Tagging Helper for the MongoDB Module
+// This file defines a local variable that merges the base tags with explicit
+// project and environment tags.
+// ---------------------------------------------------------------------------
 
-# Define a local variable to merge default, environment and project tags
 locals {
-  all_tags = merge(
-    var.tags_default, # Default tags that apply to all resources
-    var.tags_env,     # Environment-specific tags, which override defaults if there is a conflict
+  merged_tags = merge(
+    var.tags,
     {
-      "Project" = var.project_name # Adds the project name tag
-      "Environment" = var.environment_name # Adds the environment name tag
+      project     = var.project_name,
+      environment = var.environment_name
     }
   )
 }
