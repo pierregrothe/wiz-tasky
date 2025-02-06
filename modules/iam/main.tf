@@ -5,21 +5,6 @@
 // It attaches managed policies and, if provided, an inline policy loaded from an external file.
 // ---------------------------------------------------------------------------
 
-locals {
-  // Compute a dynamic role name.
-  computed_role_name = "${var.project_name}-${var.environment_name}-${var.role_type}-role"
-
-  // Merge base tags with additional identification tags.
-  merged_tags = merge(
-    var.tags,
-    {
-      project     = var.project_name,
-      environment = var.environment_name,
-      role        = var.role_type
-    }
-  )
-}
-
 resource "aws_iam_role" "role" {
   name               = local.computed_role_name
   assume_role_policy = jsonencode({
