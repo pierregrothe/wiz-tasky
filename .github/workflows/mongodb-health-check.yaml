@@ -19,7 +19,7 @@ jobs:
         with:
           terraform_version: "1.10.5"
 
-      # Set AWS credentials based on branch (environment)
+      # Set AWS credentials based on branch
       - name: Set AWS credentials based on branch
         id: set_aws_creds
         run: |
@@ -46,12 +46,32 @@ jobs:
           aws-region: ${{ secrets.AWS_REGION }}
           audience: sts.amazonaws.com
 
+      - name: Terraform Init
+        run: terraform init
+
       - name: Retrieve MongoDB Instance ID from Terraform Output
         id: get_instance
         run: |
+          # Ensure we're in the correct working directory (root of Terraform config)
           INSTANCE_ID=$(terraform output -raw mongodb_instance_id)
           echo "Instance ID: $INSTANCE_ID"
           echo "instance_id=$INSTANCE_ID" >> $GITHUB_OUTPUT
+
+      - name: Wait for MongoDB Instance to be Registered in SSM
+        run: |
+          INSTANCE_ID=${{ steps.get_instance.outputs.instance_id }}
+          echo "Checking if instance $INSTANCE_ID is registered in SSM..."
+          for i in {1..12}; do
+            SSM_STATUS=$(aws ssm describe-instance-information --region ${{ secrets.AWS_REGION }} --query "InstanceInformationList[?InstanceId=='${INSTANCE_ID}'].PingStatus" --output text)
+            echo "Attempt $i: SSM PingStatus = $SSM_STATUS"
+            if [ "$SSM_STATUS" = "Online" ]; then
+              echo "Instance is registered and online in SSM."
+              exit 0
+            fi
+            sleep 5
+          done
+          echo "Instance did not become online in SSM within the expected time."
+          exit 1
 
       - name: Send SSM Command to MongoDB Instance
         id: send_command
