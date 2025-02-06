@@ -49,7 +49,6 @@ resource "aws_instance" "bastion" {
   instance_type               = var.bastion_instance_type
   subnet_id                   = var.public_subnet_id
   key_name                    = aws_key_pair.bastion.key_name
-  iam_instance_profile        = aws_iam_instance_profile.mongodb_profile.name
   associate_public_ip_address = false
 
   vpc_security_group_ids = [aws_security_group.bastion_sg.id]
