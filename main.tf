@@ -36,15 +36,9 @@ module "bastion" {
   bastion_allowed_ssh_ip = var.bastion_allowed_ssh_ip
 }
 
-module "iam" {
-  source           = "./modules/iam"
-  role_name        = "wiz-tasky-mongodb-role"
-  remediation_mode = var.remediation_mode
-  tags             = local.all_tags
-  project_name     = var.project
-  environment_name = var.environment
-}
-
+//
+// S3 Backup Module
+//
 module "s3_backup" {
   source           = "./modules/s3-backup"
   bucket_name      = "wiz-tasky-backups-${var.environment}"
@@ -54,6 +48,46 @@ module "s3_backup" {
   environment_name = var.environment
 }
 
+//
+// Generic IAM Module for Bastion Host
+//
+module "iam_bastion" {
+  source = "./modules/iam/generic"
+  role_name         = "wiz-tasky-bastion-role"
+  assumed_by_service = "ec2.amazonaws.com"
+  managed_policy_arns = {
+    ssm = "arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore"
+  }
+  custom_policy_arns = {}  // No custom policies for Bastion in this example.
+  tags              = local.all_tags
+  project_name      = var.project
+  environment_name  = var.environment
+  role_type         = "bastion"
+}
+
+//
+// Generic IAM Module for MongoDB Instance
+//
+module "iam_mongodb" {
+  source = "./modules/iam/generic"
+  role_name         = "wiz-tasky-mongodb-role"
+  assumed_by_service = "ec2.amazonaws.com"
+  managed_policy_arns = {
+    ssm = "arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore"
+  }
+  // Attach a custom policy based on remediation mode.
+  custom_policy_arns = {
+    custom = var.remediation_mode ? "arn:aws:iam::591021320707:policy/mongodb-remediated" : "arn:aws:iam::591021320707:policy/mongodb-misconfigured"
+  }
+  tags              = local.all_tags
+  project_name      = var.project
+  environment_name  = var.environment
+  role_type         = "mongodb"
+}
+
+//
+// MongoDB Module
+//
 module "mongodb" {
   source                 = "./modules/mongodb"
   vpc_id                 = module.vpc.vpc_id
@@ -69,3 +103,4 @@ module "mongodb" {
   vpc_cidr               = module.vpc.vpc_cidr
   mongodb_iam_role_name  = module.iam.role_name
 }
+
