@@ -20,7 +20,7 @@
 // Deploys the VPC and networking components with dynamic naming.
 //
 module "vpc" {
-  source               = "./modules/vpc"
+  source = "./modules/vpc"
 
   vpc_cidr             = var.vpc_cidr
   public_subnets_cidr  = var.public_subnets_cidr
@@ -54,7 +54,7 @@ module "bastion" {
   bastion_instance_type = var.bastion_instance_type
   ami_id                = var.bastion_ami_id
   // Allowed SSH IPs should be provided as a list.
-  allowed_ssh_ips       = [var.bastion_allowed_ssh_ip]
+  allowed_ssh_ips = [var.bastion_allowed_ssh_ip]
 
   project_name     = local.all_tags["project"]
   environment_name = local.all_tags["environment"]
@@ -87,17 +87,17 @@ module "s3_backup" {
 module "iam_bastion" {
   count = var.environment == "prod" ? 0 : 1
 
-  source              = "./modules/iam"
-  assumed_by_service  = "ec2.amazonaws.com"
+  source             = "./modules/iam"
+  assumed_by_service = "ec2.amazonaws.com"
   managed_policy_arns = {
     ssm = "arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore"
   }
   // No inline policy needed for Bastion, so this is an empty string.
-  inline_policy_file  = ""
-  tags                = local.all_tags
-  project_name        = local.all_tags["project"]
-  environment_name    = local.all_tags["environment"]
-  role_type           = "bastion"
+  inline_policy_file = ""
+  tags               = local.all_tags
+  project_name       = local.all_tags["project"]
+  environment_name   = local.all_tags["environment"]
+  role_type          = "bastion"
 }
 
 //
@@ -107,16 +107,16 @@ module "iam_bastion" {
 // a misconfigured policy.
 // ---------------------------------------------------------------------------
 module "iam_mongodb" {
-  source              = "./modules/iam"
-  assumed_by_service  = "ec2.amazonaws.com"
+  source             = "./modules/iam"
+  assumed_by_service = "ec2.amazonaws.com"
   managed_policy_arns = {
     ssm = "arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore"
   }
-  inline_policy_file  = var.remediation_mode ? "${path.module}/modules/mongodb/iam_policy_remediated.json" : "${path.module}/modules/mongodb/iam_policy_misconfigured.json"
-  tags                = local.all_tags
-  project_name        = local.all_tags["project"]
-  environment_name    = local.all_tags["environment"]
-  role_type           = "mongodb"
+  inline_policy_file = var.remediation_mode ? "${path.module}/modules/mongodb/iam_policy_remediated.json" : "${path.module}/modules/mongodb/iam_policy_misconfigured.json"
+  tags               = local.all_tags
+  project_name       = local.all_tags["project"]
+  environment_name   = local.all_tags["environment"]
+  role_type          = "mongodb"
 }
 
 //
@@ -126,17 +126,17 @@ module "iam_mongodb" {
 // the IAM role from the iam_mongodb module, and passes admin credentials.
 // ---------------------------------------------------------------------------
 module "mongodb" {
-  source                = "./modules/mongodb"
-  vpc_id                = module.vpc.vpc_id
-  private_subnet_id     = element(module.vpc.private_subnets, 0)
-  instance_type         = var.mongodb_instance_type
-  ami_id                = var.mongodb_ami_id
-  remediation_mode      = var.remediation_mode
+  source                 = "./modules/mongodb"
+  vpc_id                 = module.vpc.vpc_id
+  private_subnet_id      = element(module.vpc.private_subnets, 0)
+  instance_type          = var.mongodb_instance_type
+  ami_id                 = var.mongodb_ami_id
+  remediation_mode       = var.remediation_mode
   mongodb_admin_username = var.mongodb_admin_username
   mongodb_admin_password = var.mongodb_admin_password
-  tags                  = local.all_tags
-  project_name          = local.all_tags["project"]
-  environment_name      = local.all_tags["environment"]
-  vpc_cidr              = module.vpc.vpc_cidr
-  mongodb_iam_role_name = module.iam_mongodb.role_name
+  tags                   = local.all_tags
+  project_name           = local.all_tags["project"]
+  environment_name       = local.all_tags["environment"]
+  vpc_cidr               = module.vpc.vpc_cidr
+  mongodb_iam_role_name  = module.iam_mongodb.role_name
 }
