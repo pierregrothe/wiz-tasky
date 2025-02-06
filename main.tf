@@ -53,12 +53,11 @@ module "s3_backup" {
 //
 module "iam_bastion" {
   source              = "./modules/iam"
-  role_name           = "wiz-tasky-bastion-role"
   assumed_by_service  = "ec2.amazonaws.com"
   managed_policy_arns = {
     ssm = "arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore"
   }
-  inline_policy_file  = ""   // No inline policy provided"
+  inline_policy_file  = ""  // If no inline policy is needed for Bastion.
   tags                = local.all_tags
   project_name        = var.project
   environment_name    = var.environment
@@ -66,24 +65,22 @@ module "iam_bastion" {
 }
 
 
-
-
 //
 // Generic IAM Module for MongoDB Instance
 //
 module "iam_mongodb" {
   source              = "./modules/iam"
-  role_name           = "wiz-tasky-mongodb-role"
   assumed_by_service  = "ec2.amazonaws.com"
   managed_policy_arns = {
     ssm = "arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore"
   }
   inline_policy_file  = var.remediation_mode ? "${path.module}/modules/mongodb/iam_policy_remediated.json" : "${path.module}/modules/mongodb/iam_policy_misconfigured.json"
   tags                = local.all_tags
-  project_name        = var.project
-  environment_name    = var.environment
+  project_name        = var.project         // e.g., "wiz-tasky"
+  environment_name    = var.environment     // e.g., "dev", "staging", or "prod"
   role_type           = "mongodb"
 }
+
 
 
 

@@ -3,11 +3,6 @@
 // Input Variables for the Generic IAM Module
 // ---------------------------------------------------------------------------
 
-variable "role_name" {
-  type        = string
-  description = "The name for the IAM role."
-}
-
 variable "assumed_by_service" {
   type        = string
   description = "The AWS service allowed to assume this role (e.g., ec2.amazonaws.com)."
