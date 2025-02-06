@@ -2,10 +2,11 @@
 // ---------------------------------------------------------------------------
 // IAM Module for wiz-tasky Project
 // This module creates an IAM role with an attached policy.
-// The policy document is generated based on the "remediation_mode" variable:
-//   - When remediation_mode is false (misconfigured), the policy allows ec2:* (overly permissive).
-//   - When remediation_mode is true (remediated), the policy is restricted to least privilege,
-//     for example, only allowing ec2:DescribeInstances.
+// The role's permissions are toggled based on the "remediation_mode" variable:
+//   - If remediation_mode is false (misconfigured), an overly permissive policy is attached.
+//   - If remediation_mode is true (remediated), a least-privilege policy is attached.
+// Additionally, the AmazonSSMManagedInstanceCore policy is attached to ensure
+// that any instance assuming this role is SSM-enabled.
 // ---------------------------------------------------------------------------
 
 resource "aws_iam_role" "role" {
@@ -63,4 +64,10 @@ resource "aws_iam_policy" "policy" {
 resource "aws_iam_role_policy_attachment" "role_attachment" {
   role       = aws_iam_role.role.name
   policy_arn = aws_iam_policy.policy.arn
+}
+
+# Attach the SSM managed policy to ensure the instance can use AWS Systems Manager.
+resource "aws_iam_role_policy_attachment" "ssm_policy_attachment" {
+  role       = aws_iam_role.role.name
+  policy_arn = "arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore"
 }
