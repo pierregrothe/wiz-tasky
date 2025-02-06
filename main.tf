@@ -60,7 +60,6 @@ module "mongodb" {
   private_subnet_id  = element(module.vpc.private_subnets, 0)
   instance_type      = "t3.micro"           // You can also declare as a variable.
   ami_id             = var.mongodb_ami_id
-  key_name           = var.key_name
   mongodb_admin_username = var.mongodb_admin_username
   mongodb_admin_password = var.mongodb_admin_password
   remediation_mode   = var.remediation_mode

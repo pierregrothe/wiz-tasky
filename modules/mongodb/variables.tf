@@ -24,11 +24,6 @@ variable "ami_id" {
   description = "AMI ID for the MongoDB instance (e.g., Amazon Linux 2 AMI)."
 }
 
-variable "key_name" {
-  type        = string
-  description = "The name of the EC2 key pair to use for SSH access to the MongoDB instance."
-}
-
 variable "mongodb_admin_username" {
   type        = string
   description = "The admin username for MongoDB."

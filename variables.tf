@@ -97,6 +97,7 @@ variable "remediation_mode" {
 variable "mongodb_ami_id" {
   type        = string
   description = "AMI ID to use for the MongoDB EC2 instance"
+  default     = "ami-07c65f0fc562b275d"
 }
 
 variable "mongodb_admin_username" {
