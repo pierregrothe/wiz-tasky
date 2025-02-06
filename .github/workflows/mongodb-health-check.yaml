@@ -88,7 +88,7 @@ jobs:
           COMMAND_ID=$(aws ssm send-command \
             --document-name "AWS-RunShellScript" \
             --targets "Key=instanceids,Values=${INSTANCE_ID}" \
-            --parameters commands=["mongosh --quiet --eval 'db.runCommand({ ping: 1 })'"] \
+            --parameters '{"commands": ["mongosh --quiet --eval \"db.runCommand({ ping: 1 })\""]}' \
             --timeout-seconds 30 \
             --query "Command.CommandId" \
             --output text \
