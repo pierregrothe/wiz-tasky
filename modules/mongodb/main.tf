@@ -44,42 +44,15 @@ resource "aws_security_group" "mongodb_sg" {
   tags = local.merged_tags
 }
 
-# Define a user data script that installs MongoDB and configures it.
-# For demonstration purposes, this script installs MongoDB from the default repository,
-# creates an admin user, and writes a connection string to a file.
-data "template_file" "mongodb_userdata" {
-  template = <<-EOF
-    #!/bin/bash
-    yum update -y
-    # Install MongoDB (example for Amazon Linux 2)
-    cat <<EOT > /etc/yum.repos.d/mongodb-org-4.4.repo
-    [mongodb-org-4.4]
-    name=MongoDB Repository
-    baseurl=https://repo.mongodb.org/yum/amazon/2/mongodb-org/4.4/x86_64/
-    gpgcheck=1
-    enabled=1
-    gpgkey=https://www.mongodb.org/static/pgp/server-4.4.asc
-    EOT
-    yum install -y mongodb-org
-    systemctl start mongod
-    systemctl enable mongod
-    # Wait for MongoDB to start
-    sleep 10
-    # Configure MongoDB authentication
-    mongo <<EOF_MONGO
-      use admin
-      db.createUser({
-         user: "${var.mongodb_admin_username}",
-         pwd: "${var.mongodb_admin_password}",
-         roles: [ { role: "userAdminAnyDatabase", db: "admin" } ]
-      })
-      EOF_MONGO
-    # Restart MongoDB to apply authentication
-    systemctl restart mongod
-    # Write connection string for demonstration purposes
-    echo "mongodb://${var.mongodb_admin_username}:${var.mongodb_admin_password}@localhost:27017/admin" > /home/ec2-user/mongodb_connection_string.txt
-  EOF
+# Read the MongoDB setup script from an external file and replace placeholders.
+data "template_file" "mongodb_setup" {
+  template = file("${path.module}/mongodb_setup.sh")
+  vars = {
+    mongodb_admin_username = var.mongodb_admin_username
+    mongodb_admin_password = var.mongodb_admin_password
+  }
 }
+
 
 # Launch the MongoDB EC2 instance.
 resource "aws_instance" "mongodb_instance" {
